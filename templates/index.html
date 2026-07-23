@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏏 Cricket Score Tracker</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🏏 Cricket Score Tracker</h1>
+
+    <!-- Match Setup -->
+
+    <div class="card">
+
+        <h2>Match Setup</h2>
+
+        <input type="text" id="team" placeholder="Team Name">
+
+        <input type="text" id="striker" placeholder="Opening Batsman">
+
+        <input type="text" id="non_striker" placeholder="Non-Striker">
+
+        <input type="number" id="total_overs" placeholder="Total Overs">
+
+        <button class="start-btn" onclick="startMatch()">Start Match</button>
+
+    </div>
+
+    <!-- Scoreboard -->
+
+    <div class="card">
+
+        <h2 id="team_name">Team Name</h2>
+
+        <h1 id="score">0 / 0</h1>
+
+        <h3 id="overs">Overs : 0.0</h3>
+
+        <h3 id="run_rate">Run Rate : 0.00</h3>
+
+    </div>
+
+    <!-- Batsmen -->
+
+    <div class="card">
+
+        <h2>Batting</h2>
+
+        <h3 id="striker_name">🏏 Striker : -</h3>
+
+        <h3 id="non_striker_name">🏏 Non-Striker : -</h3>
+
+    </div>
+
+    <!-- Run Buttons -->
+
+    <div class="card">
+
+        <h2>Runs</h2>
+
+        <button id="btn0" onclick="addRun(0)" disabled>0</button>
+
+        <button id="btn1" onclick="addRun(1)" disabled>1</button>
+
+        <button id="btn2" onclick="addRun(2)" disabled>2</button>
+
+        <button id="btn3" onclick="addRun(3)" disabled>3</button>
+
+        <button id="btn4" onclick="addRun(4)" disabled>4</button>
+
+        <button id="btn6" onclick="addRun(6)" disabled>6</button>
+
+    </div>
+
+    <!-- Extras -->
+
+    <div class="card">
+
+        <h2>Extras</h2>
+
+        <button id="wideBtn" onclick="wide()" disabled>Wide</button>
+
+        <button id="noBallBtn" onclick="noBall()" disabled>No Ball</button>
+
+        <button id="byeBtn" onclick="byeRun()" disabled>Bye</button>
+
+        <button id="legByeBtn" onclick="legBye()" disabled>Leg Bye</button>
+
+    </div>
+
+    <!-- Match Actions -->
+
+    <div class="card">
+
+        <h2>Match</h2>
+
+        <button id="wicketBtn" onclick="wicket()" disabled>Wicket</button>
+
+        <button id="undoBtn" onclick="undoBall()" disabled>Undo</button>
+
+        <button id="finishBtn" onclick="finishMatch()" disabled>Finish Match</button>
+
+    </div>
+
+    <!-- Current Over -->
+
+    <div class="card">
+
+        <h2>Current Over</h2>
+
+        <div id="current_over">
+            -
+        </div>
+
+    </div>
+
+    <!-- Over History -->
+
+    <div class="card">
+
+        <h2>Over History</h2>
+
+        <div id="over_history">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
