@@ -127,17 +127,18 @@ function enableButtons() {
 function addRun(run) {
 
     totalRuns += run;
-
     balls++;
 
     strikerRuns += run;
     strikerBalls++;
 
-    if (run === 4)
+    if (run === 4) {
         strikerFours++;
+    }
 
-    if (run === 6)
+    if (run === 6) {
         strikerSixes++;
+    }
 
     currentOver.push(run);
 
@@ -146,22 +147,34 @@ function addRun(run) {
         run: run
     });
 
+    // Change strike for odd runs
     if (run === 1 || run === 3) {
-
         changeStrike();
-
     }
 
+    // Complete the over
     if (balls % 6 === 0) {
 
         finishOver();
 
-        changeStrike();
+        // =====================================
+        // CHECK IF MATCH OVERS ARE COMPLETED
+        // =====================================
 
+        if (balls >= totalOvers * 6) {
+
+            updateScoreboard();
+
+            finishMatch();
+
+            return;
+        }
+
+        // Only change strike when another over remains
+        changeStrike();
     }
 
     updateScoreboard();
-
 }
 
 
@@ -481,11 +494,11 @@ function byeRun() {
 
     let run = parseInt(prompt("Bye Runs"));
 
-    if (isNaN(run) || run < 0)
+    if (isNaN(run) || run < 0) {
         return;
+    }
 
     totalRuns += run;
-
     balls++;
 
     strikerBalls++;
@@ -497,18 +510,27 @@ function byeRun() {
         run: run
     });
 
-    if (run % 2 == 1)
+    if (run % 2 === 1) {
         changeStrike();
+    }
 
-    if (balls % 6 == 0) {
+    if (balls % 6 === 0) {
 
         finishOver();
-        changeStrike();
 
+        // Finish automatically when selected overs are completed
+        if (balls >= totalOvers * 6) {
+
+            updateScoreboard();
+            finishMatch();
+
+            return;
+        }
+
+        changeStrike();
     }
 
     updateScoreboard();
-
 }
 
 
@@ -521,11 +543,11 @@ function legBye() {
 
     let run = parseInt(prompt("Leg Bye Runs"));
 
-    if (isNaN(run) || run < 0)
+    if (isNaN(run) || run < 0) {
         return;
+    }
 
     totalRuns += run;
-
     balls++;
 
     strikerBalls++;
@@ -537,18 +559,27 @@ function legBye() {
         run: run
     });
 
-    if (run % 2 == 1)
+    if (run % 2 === 1) {
         changeStrike();
+    }
 
-    if (balls % 6 == 0) {
+    if (balls % 6 === 0) {
 
         finishOver();
-        changeStrike();
 
+        // Finish automatically when selected overs are completed
+        if (balls >= totalOvers * 6) {
+
+            updateScoreboard();
+            finishMatch();
+
+            return;
+        }
+
+        changeStrike();
     }
 
     updateScoreboard();
-
 }
 
 
