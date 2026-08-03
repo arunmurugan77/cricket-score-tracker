@@ -32,35 +32,75 @@ let ballHistory = [];
 function startMatch() {
 
     const team = document.getElementById("team").value.trim();
-    strikerName = document.getElementById("striker").value.trim();
-    nonStrikerName = document.getElementById("non_striker").value.trim();
-    totalOvers = parseInt(document.getElementById("total_overs").value);
+    const newStriker = document.getElementById("striker").value.trim();
+    const newNonStriker = document.getElementById("non_striker").value.trim();
+    const newTotalOvers = parseInt(
+        document.getElementById("total_overs").value
+    );
 
+    // Check inputs first
     if (
         team === "" ||
-        strikerName === "" ||
-        nonStrikerName === "" ||
-        isNaN(totalOvers)
+        newStriker === "" ||
+        newNonStriker === "" ||
+        isNaN(newTotalOvers) ||
+        newTotalOvers <= 0
     ) {
-        alert("Please fill all details.");
+        alert("Please fill all details correctly.");
         return;
     }
+
+    // =====================================
+    // RESET PREVIOUS MATCH
+    // =====================================
+
+    totalRuns = 0;
+    wickets = 0;
+    balls = 0;
+
+    totalOvers = newTotalOvers;
+
+    strikerName = newStriker;
+    nonStrikerName = newNonStriker;
+
+    strikerRuns = 0;
+    strikerBalls = 0;
+    strikerFours = 0;
+    strikerSixes = 0;
+
+    nonStrikerRuns = 0;
+    nonStrikerBalls = 0;
+    nonStrikerFours = 0;
+    nonStrikerSixes = 0;
+
+    currentOver = [];
+    overHistory = [];
+    ballHistory = [];
+
+    // =====================================
+    // RESET DISPLAY
+    // =====================================
 
     document.getElementById("team_name").innerText = team;
 
     document.getElementById("striker_name").innerHTML =
-        "🏏 Striker : " + strikerName + " (0)";
-    document.getElementById("non_striker_name").innerHTML =
-        "🏏 Non-Striker : " + nonStrikerName + " (0)";
+        "🏏 Striker : " + strikerName + " (0 off 0)";
 
+    document.getElementById("non_striker_name").innerHTML =
+        "🏏 Non-Striker : " + nonStrikerName + " (0 off 0)";
+
+    document.getElementById("current_over").innerHTML = "-";
+
+    document.getElementById("over_history").innerHTML = "";
+
+    // Update scoreboard
     updateScoreboard();
 
+    // Enable scoring buttons
     enableButtons();
 
     alert("Match Started!");
 }
-
-
 // ==============================
 // Enable Buttons
 // ==============================
@@ -563,7 +603,7 @@ function undoBall() {
         const lastOver = overHistory.pop();
 
         currentOver = lastOver.balls
-            ? lastOver.balls.split(" ")
+            ? [...lastOver.balls]
             : [];
 
         // At the end of an over we changed strike.
@@ -830,118 +870,74 @@ function updateCurrentOver() {
 
 function refreshOverHistory() {
 
-    const historyDiv =
-        document.getElementById("over_history");
+    const historyDiv = document.getElementById("over_history");
 
     historyDiv.innerHTML = "";
 
     if (overHistory.length === 0) {
-
         historyDiv.innerHTML =
-            '<p class="history-placeholder">' +
-            'No completed overs yet' +
-            '</p>';
-
+            '<p class="history-placeholder">No completed overs yet</p>';
         return;
     }
 
     overHistory.forEach((over, index) => {
 
-        const row = document.createElement("div");
-
-        row.className = "over-item";
-
-
-        // ==========================
-        // Ball circles
-        // ==========================
-
         let ballsHTML = "";
 
-        const balls = over.balls
-            ? over.balls.split(" ")
+        // over.balls is now an ARRAY
+        const overBalls = Array.isArray(over.balls)
+            ? over.balls
             : [];
 
+        overBalls.forEach(ball => {
 
-        balls.forEach(ball => {
+            let ballClass = "over-ball";
 
-            let ballClass = "history-ball";
-
-
-            // Wicket
-            if (ball === "W") {
-
-                ballClass += " history-wicket";
-
+            if (String(ball) === "W") {
+                ballClass += " wicket-ball";
+            }
+            else if (String(ball) === "4") {
+                ballClass += " four";
+            }
+            else if (String(ball) === "6") {
+                ballClass += " six";
+            }
+            else if (String(ball).toLowerCase().includes("wd")) {
+                ballClass += " extra-ball";
+            }
+            else if (String(ball).toLowerCase().includes("nb")) {
+                ballClass += " extra-ball";
             }
 
-            // Four
-            else if (ball === "4") {
-
-                ballClass += " history-four";
-
-            }
-
-            // Six
-            else if (ball === "6") {
-
-                ballClass += " history-six";
-
-            }
-
-            // Wide
-            else if (
-                ball.toLowerCase().includes("wd")
-            ) {
-
-                ballClass += " history-wide";
-
-            }
-
-            // No Ball
-            else if (
-                ball.toLowerCase().includes("nb")
-            ) {
-
-                ballClass += " history-noball";
-
-            }
-
-
-            ballsHTML +=
-                '<span class="' +
-                ballClass +
-                '">' +
-                ball +
-                '</span>';
+            ballsHTML += `
+                <span class="${ballClass}">
+                    ${ball}
+                </span>
+            `;
         });
 
+        historyDiv.innerHTML += `
+            <div class="over-item">
 
-        // ==========================
-        // Complete Over Row
-        // ==========================
+                <div class="over-row">
 
-        row.innerHTML = `
+                    <strong class="over-number">
+                        Over ${index + 1}
+                    </strong>
 
-            <div class="over-number">
-                Over ${index + 1}
+                    <div class="over-balls">
+                        ${ballsHTML}
+                    </div>
+
+                    <strong class="over-score">
+                        ${over.score}/${over.wickets}
+                    </strong>
+
+                </div>
+
             </div>
-
-            <div class="history-balls">
-                ${ballsHTML}
-            </div>
-
-            <div class="over-total">
-                ${over.totalScore}/${over.wickets}
-            </div>
-
         `;
-
-
-        historyDiv.appendChild(row);
-
     });
-
 }
 
 

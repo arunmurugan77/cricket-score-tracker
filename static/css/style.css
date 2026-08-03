@@ -1204,3 +1204,63 @@ tbody tr:hover {
     font-size: 18px;
     font-weight: bold;
 }
+
+/* =========================================
+   MOBILE OVER HISTORY - SINGLE ROW
+========================================= */
+
+@media (max-width: 600px) {
+
+    #over_history .over-item {
+        width: 100%;
+        padding: 10px 6px !important;
+        overflow-x: auto;
+    }
+
+    #over_history .over-row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        width: 100%;
+        gap: 4px !important;
+    }
+
+    #over_history .over-number {
+        flex: 0 0 48px;
+        min-width: 48px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    #over_history .over-balls {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center;
+        gap: 3px !important;
+        flex: 1;
+        min-width: 0;
+    }
+
+    #over_history .over-ball {
+        width: 27px !important;
+        height: 27px !important;
+        min-width: 27px !important;
+        flex: 0 0 27px !important;
+
+        margin: 0 !important;
+
+        font-size: 11px !important;
+    }
+
+    #over_history .over-score {
+        flex: 0 0 42px;
+        min-width: 42px;
+
+        text-align: right;
+        white-space: nowrap;
+
+        font-size: 12px !important;
+    }
+}
