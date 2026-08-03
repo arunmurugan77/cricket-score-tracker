@@ -114,6 +114,7 @@ def save_match_api():
             player["runs"],
 
             player["balls"],
+            player.get("dots", 0),
 
             player["fours"],
 

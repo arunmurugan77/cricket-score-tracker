@@ -12,17 +12,20 @@ let nonStrikerName = "";
 
 let strikerRuns = 0;
 let strikerBalls = 0;
+let strikerDots = 0;
 let strikerFours = 0;
 let strikerSixes = 0;
 
 let nonStrikerRuns = 0;
 let nonStrikerBalls = 0;
+let nonStrikerDots = 0;
 let nonStrikerFours = 0;
 let nonStrikerSixes = 0;
 
 let currentOver = [];
 let overHistory = [];
 let ballHistory = [];
+let dismissedBatsmen = [];
 
 
 // ==============================
@@ -65,17 +68,20 @@ function startMatch() {
 
     strikerRuns = 0;
     strikerBalls = 0;
+    strikerDots = 0;
     strikerFours = 0;
     strikerSixes = 0;
 
     nonStrikerRuns = 0;
     nonStrikerBalls = 0;
+    nonStrikerDots = 0;
     nonStrikerFours = 0;
     nonStrikerSixes = 0;
 
     currentOver = [];
     overHistory = [];
     ballHistory = [];
+    dismissedBatsmen = [];
 
     // =====================================
     // RESET DISPLAY
@@ -131,6 +137,9 @@ function addRun(run) {
 
     strikerRuns += run;
     strikerBalls++;
+    if (run === 0) {
+        strikerDots++;
+    }
 
     if (run === 4) {
         strikerFours++;
@@ -186,26 +195,40 @@ function changeStrike() {
 
     let temp;
 
+    // Name
     temp = strikerName;
     strikerName = nonStrikerName;
     nonStrikerName = temp;
 
+
+    // Runs
     temp = strikerRuns;
     strikerRuns = nonStrikerRuns;
     nonStrikerRuns = temp;
 
+
+    // Balls
     temp = strikerBalls;
     strikerBalls = nonStrikerBalls;
     nonStrikerBalls = temp;
 
+
+    // DOT BALLS
+    temp = strikerDots;
+    strikerDots = nonStrikerDots;
+    nonStrikerDots = temp;
+
+
+    // Fours
     temp = strikerFours;
     strikerFours = nonStrikerFours;
     nonStrikerFours = temp;
 
+
+    // Sixes
     temp = strikerSixes;
     strikerSixes = nonStrikerSixes;
     nonStrikerSixes = temp;
-
 }
 
 
@@ -341,8 +364,24 @@ function wicket() {
     balls++;
 
     strikerBalls++;
+    strikerDots++;
 
     currentOver.push("W");
+
+    // Save dismissed batsman BEFORE replacing him
+    dismissedBatsmen.push({
+        player_name: strikerName,
+        runs: strikerRuns,
+        balls: strikerBalls,
+        dots: strikerDots,
+        fours: strikerFours,
+        sixes: strikerSixes,
+
+        strike_rate:
+            strikerBalls === 0
+                ? 0
+                : ((strikerRuns / strikerBalls) * 100).toFixed(2)
+    });
 
     ballHistory.push({
         type: "wicket",
@@ -351,47 +390,53 @@ function wicket() {
 
     updateScoreboard();
 
+
     // End innings if all out
     if (wickets >= 10) {
 
         finishMatch();
         return;
-
     }
+
 
     // End innings if overs completed
     if (balls >= totalOvers * 6) {
 
         finishMatch();
         return;
-
     }
 
+
+    // Ask for new batsman
     let newPlayer = prompt("Enter New Batsman Name");
 
     if (newPlayer == null || newPlayer.trim() === "") {
 
         newPlayer = "Batsman " + (wickets + 2);
-
     }
 
+
+    // Replace dismissed striker
     strikerName = newPlayer;
+
     strikerRuns = 0;
     strikerBalls = 0;
+    strikerDots = 0;
     strikerFours = 0;
     strikerSixes = 0;
 
+
+    // Complete over if wicket was 6th legal ball
     if (balls % 6 === 0) {
 
         finishOver();
-        changeStrike();
 
+        changeStrike();
     }
 
+
     updateScoreboard();
-
 }
-
 
 
 // ==============================
@@ -501,7 +546,11 @@ function byeRun() {
     totalRuns += run;
     balls++;
 
+    // Batsman faced the delivery
     strikerBalls++;
+
+    // No runs scored from the bat
+    strikerDots++;
 
     currentOver.push(run + "B");
 
@@ -518,7 +567,6 @@ function byeRun() {
 
         finishOver();
 
-        // Finish automatically when selected overs are completed
         if (balls >= totalOvers * 6) {
 
             updateScoreboard();
@@ -550,7 +598,11 @@ function legBye() {
     totalRuns += run;
     balls++;
 
+    // Batsman faced the delivery
     strikerBalls++;
+
+    // No runs scored from the bat
+    strikerDots++;
 
     currentOver.push(run + "LB");
 
@@ -567,7 +619,6 @@ function legBye() {
 
         finishOver();
 
-        // Finish automatically when selected overs are completed
         if (balls >= totalOvers * 6) {
 
             updateScoreboard();
@@ -624,9 +675,9 @@ function undoBall() {
 
     const last = ballHistory.pop();
 
+
     // =====================================
-    // If previous ball completed an over,
-    // reopen that completed over first
+    // REOPEN COMPLETED OVER
     // =====================================
 
     if (currentOver.length === 0 && overHistory.length > 0) {
@@ -637,8 +688,7 @@ function undoBall() {
             ? [...lastOver.balls]
             : [];
 
-        // At the end of an over we changed strike.
-        // Reverse that change before undoing the ball.
+        // Reverse end-of-over strike change
         changeStrike();
 
         refreshOverHistory();
@@ -651,8 +701,7 @@ function undoBall() {
 
     if (last.type === "run") {
 
-        // If odd run changed strike,
-        // reverse the strike first.
+        // Reverse strike for odd runs
         if (last.run === 1 || last.run === 3) {
             changeStrike();
         }
@@ -663,13 +712,24 @@ function undoBall() {
         strikerRuns -= last.run;
         strikerBalls--;
 
+
+        // Undo Dot Ball
+        if (last.run === 0) {
+            strikerDots--;
+        }
+
+
+        // Undo Four
         if (last.run === 4) {
             strikerFours--;
         }
 
+
+        // Undo Six
         if (last.run === 6) {
             strikerSixes--;
         }
+
 
         currentOver.pop();
     }
@@ -684,21 +744,45 @@ function undoBall() {
         wickets--;
         balls--;
 
-        /*
-           The wicket function replaces the striker
-           with a new batsman.
 
-           Your current ballHistory only stores the
-           dismissed batsman's name, so restore that
-           batsman's name here.
-        */
+        const dismissedPlayer = dismissedBatsmen.pop();
 
-        strikerName = last.batsman;
 
-        strikerRuns = 0;
-        strikerBalls = 0;
-        strikerFours = 0;
-        strikerSixes = 0;
+        if (dismissedPlayer) {
+
+            // Restore dismissed batsman
+            strikerName = dismissedPlayer.player_name;
+
+            strikerRuns = dismissedPlayer.runs;
+
+            // Remove wicket delivery from balls faced
+            strikerBalls = Math.max(
+                0,
+                dismissedPlayer.balls - 1
+            );
+
+            // Remove wicket delivery from dots
+            strikerDots = Math.max(
+                0,
+                (dismissedPlayer.dots || 0) - 1
+            );
+
+            strikerFours = dismissedPlayer.fours;
+
+            strikerSixes = dismissedPlayer.sixes;
+
+        } else {
+
+            // Safety fallback
+            strikerName = last.batsman;
+
+            strikerRuns = 0;
+            strikerBalls = 0;
+            strikerDots = 0;
+            strikerFours = 0;
+            strikerSixes = 0;
+        }
+
 
         currentOver.pop();
     }
@@ -712,7 +796,7 @@ function undoBall() {
 
         totalRuns--;
 
-        // Wide does NOT reduce legal balls.
+        // Wide is not a legal delivery
         currentOver.pop();
     }
 
@@ -723,7 +807,7 @@ function undoBall() {
 
     else if (last.type === "noball") {
 
-        // Odd bat runs changed strike.
+        // Reverse strike change
         if (last.batRuns === 1 || last.batRuns === 3) {
             changeStrike();
         }
@@ -731,18 +815,20 @@ function undoBall() {
         totalRuns -= (1 + last.batRuns);
 
         strikerRuns -= last.batRuns;
+
         strikerBalls--;
+
 
         if (last.batRuns === 4) {
             strikerFours--;
         }
 
+
         if (last.batRuns === 6) {
             strikerSixes--;
         }
 
-        // No Ball was not a legal delivery,
-        // so do NOT decrease balls.
+
         currentOver.pop();
     }
 
@@ -753,15 +839,19 @@ function undoBall() {
 
     else if (last.type === "bye") {
 
-        // Odd bye changed strike.
+        // Reverse strike for odd bye runs
         if (last.run % 2 === 1) {
             changeStrike();
         }
 
         totalRuns -= last.run;
+
         balls--;
 
         strikerBalls--;
+
+        // Undo dot ball
+        strikerDots--;
 
         currentOver.pop();
     }
@@ -773,22 +863,26 @@ function undoBall() {
 
     else if (last.type === "legbye") {
 
-        // Odd leg bye changed strike.
+        // Reverse strike for odd leg-bye runs
         if (last.run % 2 === 1) {
             changeStrike();
         }
 
         totalRuns -= last.run;
+
         balls--;
 
         strikerBalls--;
+
+        // Undo dot ball
+        strikerDots--;
 
         currentOver.pop();
     }
 
 
     // =====================================
-    // Safety
+    // SAFETY CHECKS
     // =====================================
 
     if (totalRuns < 0) {
@@ -803,16 +897,37 @@ function undoBall() {
         wickets = 0;
     }
 
+    if (strikerRuns < 0) {
+        strikerRuns = 0;
+    }
+
+    if (strikerBalls < 0) {
+        strikerBalls = 0;
+    }
+
+    if (strikerDots < 0) {
+        strikerDots = 0;
+    }
+
+    if (strikerFours < 0) {
+        strikerFours = 0;
+    }
+
+    if (strikerSixes < 0) {
+        strikerSixes = 0;
+    }
+
 
     // =====================================
-    // Refresh Screen
+    // REFRESH SCREEN
     // =====================================
 
     refreshOverHistory();
+
     updateCurrentOver();
+
     updateScoreboard();
 }
-
 
 
 // ==============================
@@ -1077,6 +1192,17 @@ async function saveMatch() {
 
         batsmen: [
 
+            // =====================================
+            // DISMISSED BATSMEN
+            // =====================================
+
+            ...dismissedBatsmen,
+
+
+            // =====================================
+            // CURRENT STRIKER
+            // =====================================
+
             {
 
                 player_name: strikerName,
@@ -1084,6 +1210,8 @@ async function saveMatch() {
                 runs: strikerRuns,
 
                 balls: strikerBalls,
+
+                dots: strikerDots,
 
                 fours: strikerFours,
 
@@ -1096,6 +1224,11 @@ async function saveMatch() {
 
             },
 
+
+            // =====================================
+            // CURRENT NON-STRIKER
+            // =====================================
+
             {
 
                 player_name: nonStrikerName,
@@ -1103,6 +1236,8 @@ async function saveMatch() {
                 runs: nonStrikerRuns,
 
                 balls: nonStrikerBalls,
+
+                dots: nonStrikerDots,
 
                 fours: nonStrikerFours,
 
@@ -1121,6 +1256,7 @@ async function saveMatch() {
 
     };
 
+
     try {
 
         const response = await fetch("/save_match", {
@@ -1136,6 +1272,7 @@ async function saveMatch() {
             body: JSON.stringify(data)
 
         });
+
 
         const result = await response.json();
 

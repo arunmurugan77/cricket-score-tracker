@@ -55,6 +55,15 @@ def create_database():
         )
     """)
 
+    # ======================================
+    # Add Dot Balls Column
+    # ======================================
+
+    cursor.execute("""
+        ALTER TABLE batsmen
+        ADD COLUMN IF NOT EXISTS dots INTEGER DEFAULT 0
+    """)
+
     # Over history table
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS over_history (
@@ -129,6 +138,7 @@ def save_batsman(
     player_name,
     runs,
     balls,
+    dots,
     fours,
     sixes,
     strike_rate
@@ -144,16 +154,18 @@ def save_batsman(
             player_name,
             runs,
             balls,
+            dots,
             fours,
             sixes,
             strike_rate
         )
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """, (
         match_id,
         player_name,
         runs,
         balls,
+        dots,
         fours,
         sixes,
         strike_rate
@@ -240,8 +252,19 @@ def get_batsmen(match_id):
     conn = get_connection()
     cursor = conn.cursor()
 
+    # Explicit order so match_details.html
+    # receives predictable column positions
     cursor.execute("""
-        SELECT *
+        SELECT
+            id,
+            match_id,
+            player_name,
+            runs,
+            balls,
+            fours,
+            sixes,
+            strike_rate,
+            dots
         FROM batsmen
         WHERE match_id = %s
         ORDER BY id ASC
