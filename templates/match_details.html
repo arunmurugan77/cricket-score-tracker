@@ -4,165 +4,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Match Details</title>
 
-    <style>
-
-        body{
-            font-family:Arial,Helvetica,sans-serif;
-            background:#f2f2f2;
-            padding:20px;
-        }
-
-        h1{
-            text-align:center;
-            color:darkgreen;
-        }
-
-        h2{
-            margin-top:30px;
-            color:#1565c0;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:15px;
-            background:white;
-        }
-
-        th,td{
-            border:1px solid #ddd;
-            padding:12px;
-            text-align:center;
-        }
-
-        th{
-            background:green;
-            color:white;
-        }
-
-        tr:nth-child(even){
-            background:#f9f9f9;
-        }
-
-        .card{
-            background:white;
-            padding:20px;
-            margin-top:20px;
-            border-radius:10px;
-            box-shadow:0 2px 8px rgba(0,0,0,.2);
-        }
-
-        .btn{
-            display:inline-block;
-            margin-top:20px;
-            padding:10px 20px;
-            background:green;
-            color:white;
-            text-decoration:none;
-            border-radius:5px;
-        }
-
-        .btn:hover{
-            background:darkgreen;
-        }
-
-    </style>
-
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
-<h1>🏏 Match Details</h1>
+<div class="container">
 
-<div class="card">
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-    <h2>Match Summary</h2>
+    <div class="details-header">
 
-    <p><b>Team :</b> {{ match[1] }}</p>
+        <div>
+            <h1>🏏 Match Details</h1>
+            <p>Complete match scorecard and over history</p>
+        </div>
 
-    <p><b>Score :</b> {{ match[2] }}/{{ match[3] }}</p>
+        <a href="{{ url_for('history') }}"
+           class="back">
+            ⬅ Match History
+        </a>
 
-    <p><b>Overs :</b> {{ match[4] }}</p>
+    </div>
 
-    <p><b>Run Rate :</b> {{ match[5] }}</p>
 
-    <p><b>Date :</b> {{ match[6] }}</p>
+    <!-- =========================
+         MATCH SUMMARY
+    ========================== -->
+
+    <div class="match-summary-card">
+
+        <div class="summary-team">
+
+            <span class="summary-label">
+                TEAM
+            </span>
+
+            <h2>
+                🏏 {{ match[1] }}
+            </h2>
+
+        </div>
+
+
+        <div class="summary-score">
+
+            {{ match[2] }}/{{ match[3] }}
+
+        </div>
+
+
+        <div class="summary-grid">
+
+            <div class="summary-box">
+
+                <span>
+                    OVERS
+                </span>
+
+                <strong>
+                    {{ match[4] }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <span>
+                    RUN RATE
+                </span>
+
+                <strong>
+                    {{ match[5] }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <span>
+                    WICKETS
+                </span>
+
+                <strong>
+                    {{ match[3] }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="match-date">
+
+            📅 {{ match[6] }}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         BATTING SCORECARD
+    ========================== -->
+
+    <div class="card details-section">
+
+        <div class="section-title">
+
+            <h2>
+                🏏 Batting Scorecard
+            </h2>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table class="scorecard-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Player</th>
+
+                        <th>Runs</th>
+
+                        <th>Balls</th>
+
+                        <th>4s</th>
+
+                        <th>6s</th>
+
+                        <th>SR</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for player in batsmen %}
+
+                    <tr>
+
+                        <td class="player-name">
+
+                            🏏 {{ player[2] }}
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ player[3] }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+                            {{ player[4] }}
+                        </td>
+
+
+                        <td>
+                            {{ player[5] }}
+                        </td>
+
+
+                        <td>
+                            {{ player[6] }}
+                        </td>
+
+
+                        <td>
+                            {{ player[7] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         OVER HISTORY
+    ========================== -->
+
+    <div class="card details-section">
+
+        <div class="section-title">
+
+            <h2>
+                🎯 Over History
+            </h2>
+
+        </div>
+
+
+        {% if overs %}
+
+        <div class="details-over-history">
+
+            {% for over in overs %}
+
+            <div class="details-over-row">
+
+                <div class="details-over-number">
+
+                    Over {{ over[2] }}
+
+                </div>
+
+
+                <div class="details-over-events">
+
+                    {{ over[4] }}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <div class="details-empty">
+
+            No over history available.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =========================
+         BOTTOM BUTTON
+    ========================== -->
+
+    <div class="details-bottom">
+
+        <a href="{{ url_for('history') }}"
+           class="back">
+
+            ⬅ Back to Match History
+
+        </a>
+
+    </div>
 
 </div>
-
-
-<h2>Batting Scorecard</h2>
-
-<table>
-
-<tr>
-
-<th>Player</th>
-
-<th>Runs</th>
-
-<th>Balls</th>
-
-<th>4s</th>
-
-<th>6s</th>
-
-<th>SR</th>
-
-</tr>
-
-{% for player in batsmen %}
-
-<tr>
-
-<td>{{ player[2] }}</td>
-
-<td>{{ player[3] }}</td>
-
-<td>{{ player[4] }}</td>
-
-<td>{{ player[5] }}</td>
-
-<td>{{ player[6] }}</td>
-
-<td>{{ player[7] }}</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-
-<h2>Over History</h2>
-
-<table>
-
-<tr>
-
-<th>Over</th>
-
-<th>Events</th>
-
-</tr>
-
-{% for over in overs %}
-
-<tr>
-
-<td>{{ over[2] }}</td>
-
-<td>{{ over[4] }}</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-<a href="/history" class="btn">⬅ Back to Match History</a>
 
 </body>
 

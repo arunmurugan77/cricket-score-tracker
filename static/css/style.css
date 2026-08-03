@@ -1,257 +1,1206 @@
-/* ==========================
-   General
-========================== */
+/* =====================================================
+   CRICKET SCORE TRACKER
+   MODERN RESPONSIVE UI
+===================================================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+
+/* =========================
+   GLOBAL
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-
-    font-family:Arial, Helvetica, sans-serif;
-
-    background:#f1f5f9;
-
-    padding:30px;
-
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef5f0;
+    color: #1f2937;
+    min-height: 100vh;
+    padding: 30px 15px;
 }
 
-.container{
-
-    max-width:1000px;
-
-    margin:auto;
-
+.container {
+    width: 100%;
+    max-width: 950px;
+    margin: 0 auto;
 }
 
-/* ==========================
-   Heading
-========================== */
 
-h1{
+/* =========================
+   APP HEADER
+========================= */
 
-    text-align:center;
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
 
-    color:darkgreen;
-
-    margin-bottom:25px;
-
+    margin-bottom: 30px;
+    padding: 20px;
 }
 
-h2{
+.profile-img {
+    width: 160px;
+    height: 160px;
 
-    margin-bottom:15px;
+    object-fit: cover;
+    object-position: center;
 
-    color:#222;
+    border-radius: 50%;
+    border: 4px solid #08752b;
 
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+
+    image-rendering: auto;
 }
 
-h3{
-
-    margin:10px 0;
-
+.header-text h1 {
+    color: #08752b;
+    font-size: 36px;
+    margin-bottom: 5px;
 }
 
-/* ==========================
-   Cards
-========================== */
-
-.card{
-
-    background:white;
-
-    padding:20px;
-
-    border-radius:12px;
-
-    margin-bottom:20px;
-
-    box-shadow:0px 2px 8px rgba(0,0,0,.15);
-
+.header-text p {
+    color: #6b7280;
+    font-size: 15px;
 }
 
-/* ==========================
-   Inputs
-========================== */
 
-input{
+/* =========================
+   NORMAL CARD
+========================= */
 
-    width:100%;
+.card {
+    background: #ffffff;
 
-    padding:12px;
+    border-radius: 16px;
 
-    margin-top:10px;
+    padding: 25px;
 
-    margin-bottom:15px;
+    margin-bottom: 22px;
 
-    border:1px solid #ccc;
-
-    border-radius:8px;
-
-    font-size:16px;
-
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
 }
 
-/* ==========================
-   Buttons
-========================== */
 
-button{
+/* =========================
+   SECTION TITLES
+========================= */
 
-    padding:12px 18px;
-
-    margin:5px;
-
-    border:none;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    background:green;
-
-    color:white;
-
-    transition:.3s;
-
+.section-title {
+    margin-bottom: 20px;
 }
 
-button:hover{
-
-    background:darkgreen;
-
+.section-title h2 {
+    font-size: 23px;
+    color: #1f2937;
+    margin-bottom: 5px;
 }
 
-button:disabled{
-
-    background:gray;
-
-    cursor:not-allowed;
-
+.section-title p {
+    color: #777;
+    font-size: 14px;
 }
 
-.start-btn{
 
-    width:100%;
+/* =========================
+   MATCH SETUP
+========================= */
 
-    background:#1565c0;
+.setup-grid {
+    display: grid;
 
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
 }
 
-.start-btn:hover{
-
-    background:#0d47a1;
-
+.input-group {
+    display: flex;
+    flex-direction: column;
 }
 
-/* ==========================
-   Scoreboard
-========================== */
+.input-group label {
+    font-size: 14px;
 
-#score{
+    font-weight: 600;
 
-    font-size:42px;
+    color: #374151;
 
-    color:#d32f2f;
-
-    margin:15px 0;
-
+    margin-bottom: 7px;
 }
 
-#overs{
+input,
+select {
+    width: 100%;
 
-    color:#444;
+    padding: 13px 14px;
 
-    font-weight:bold;
+    border: 1px solid #d1d5db;
 
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.2s;
 }
 
-#run_rate{
+input:focus,
+select:focus {
+    border-color: #08752b;
 
-    color:#555;
-
+    box-shadow:
+        0 0 0 3px rgba(8, 117, 43, 0.10);
 }
 
-/* ==========================
-   Players
-========================== */
 
-#striker_name{
+/* =========================
+   BUTTON DEFAULT
+========================= */
 
-    color:green;
+button {
+    border: none;
 
-    font-size:22px;
+    border-radius: 9px;
 
+    padding: 12px 18px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
 }
 
-#non_striker_name{
-
-    color:#333;
-
-    font-size:22px;
-
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
 }
 
-/* ==========================
-   Current Over
-========================== */
-
-#current_over{
-
-    min-height:45px;
-
-    font-size:24px;
-
-    font-weight:bold;
-
-    color:#1565c0;
-
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
 }
 
-/* ==========================
-   Over History
-========================== */
 
-#over_history{
+/* =========================
+   START MATCH
+========================= */
 
-    background:#f8f8f8;
+.start-btn {
+    width: 100%;
 
-    border-radius:8px;
+    margin-top: 22px;
 
-    padding:15px;
+    padding: 14px;
 
-    min-height:120px;
+    background: #08752b;
 
-    line-height:35px;
+    color: #ffffff;
 
+    font-size: 17px;
+
+    box-shadow:
+        0 4px 10px rgba(8, 117, 43, 0.20);
 }
 
-/* ==========================
-   Mobile
-========================== */
+.start-btn:hover {
+    background: #066523;
+}
 
-@media(max-width:768px){
 
-    body{
+/* =========================
+   SCOREBOARD
+========================= */
 
-        padding:10px;
+.scoreboard-card {
+    background: #08752b;
 
+    color: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    margin-bottom: 22px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 22px rgba(8, 117, 43, 0.20);
+}
+
+.team-title {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-bottom: 15px;
+}
+
+.team-title h2 {
+    font-size: 23px;
+    color: #ffffff;
+}
+
+.main-score {
+    font-size: 54px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    margin: 25px 0 28px;
+}
+
+.score-info {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.score-info-box {
+    background: rgba(255, 255, 255, 0.13);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    border-radius: 12px;
+
+    padding: 15px;
+}
+
+.info-label {
+    display: block;
+
+    font-size: 11px;
+
+    letter-spacing: 1.2px;
+
+    margin-bottom: 7px;
+
+    opacity: 0.8;
+}
+
+.score-info-box h3 {
+    color: #ffffff;
+    font-size: 17px;
+}
+
+
+/* =========================
+   BATTING
+========================= */
+
+.batsmen-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.batsman-box {
+    background: #f5f7f6;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 18px;
+}
+
+.striker-box {
+    background: #eef9f1;
+
+    border: 1px solid #b8dfc3;
+}
+
+.player-label {
+    display: inline-block;
+
+    color: #08752b;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 10px;
+}
+
+.batsman-box h3 {
+    color: #1f2937;
+
+    font-size: 17px;
+
+    margin: 0;
+}
+
+
+/* =========================
+   RUN BUTTONS
+========================= */
+
+.run-buttons {
+    display: grid;
+
+    grid-template-columns:
+        repeat(6, 1fr);
+
+    gap: 12px;
+}
+
+.run-buttons button {
+    height: 58px;
+
+    background: #08752b;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    font-weight: 700;
+}
+
+.run-buttons button:hover:not(:disabled) {
+    background: #066523;
+}
+
+.run-buttons .four-btn {
+    background: #1565c0;
+}
+
+.run-buttons .four-btn:hover:not(:disabled) {
+    background: #0d47a1;
+}
+
+.run-buttons .six-btn {
+    background: #7b1fa2;
+}
+
+.run-buttons .six-btn:hover:not(:disabled) {
+    background: #5e1580;
+}
+
+
+/* =========================
+   EXTRAS
+========================= */
+
+.extras-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.extras-grid button {
+    min-height: 48px;
+}
+
+.wide-btn {
+    background: #1565c0;
+    color: #ffffff;
+}
+
+.noball-btn {
+    background: #f39c12;
+    color: #ffffff;
+}
+
+.bye-btn {
+    background: #00897b;
+    color: #ffffff;
+}
+
+.legbye-btn {
+    background: #546e7a;
+    color: #ffffff;
+}
+
+
+/* =========================
+   MATCH ACTIONS
+========================= */
+
+.action-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.wicket-btn {
+    background: #d32f2f;
+    color: #ffffff;
+}
+
+.undo-btn {
+    background: #616161;
+    color: #ffffff;
+}
+
+.finish-btn {
+    background: #1f2937;
+    color: #ffffff;
+}
+
+
+/* =========================
+   CURRENT OVER
+========================= */
+
+.current-over {
+    min-height: 65px;
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    background: #f4f8f5;
+
+    border-left: 5px solid #08752b;
+
+    border-radius: 10px;
+
+    padding: 17px;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #08752b;
+}
+
+
+/* =========================
+   OVER HISTORY
+========================= */
+
+.over-history {
+    background: #f8faf9;
+
+    border-radius: 10px;
+
+    padding: 10px;
+}
+
+.over-history p {
+    background: #ffffff;
+
+    border-left: 4px solid #08752b;
+
+    padding: 14px 16px;
+
+    margin-bottom: 9px;
+
+    border-radius: 8px;
+
+    line-height: 1.6;
+
+    box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.05);
+}
+
+.over-history p:last-child {
+    margin-bottom: 0;
+}
+
+.over-history strong {
+    color: #08752b;
+}
+
+.history-placeholder {
+    color: #777 !important;
+
+    text-align: center;
+
+    border-left: none !important;
+
+    box-shadow: none !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================
+   BOTTOM NAVIGATION
+========================= */
+
+.bottom-navigation {
+    text-align: center;
+
+    margin: 28px 0 15px;
+}
+
+.history-btn {
+    display: inline-block;
+
+    background: #1565c0;
+
+    color: #ffffff;
+
+    padding: 13px 25px;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.history-btn:hover {
+    background: #0d47a1;
+
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   HISTORY PAGE
+===================================================== */
+
+.container > h1 {
+    text-align: center;
+
+    color: #08752b;
+
+    margin-bottom: 25px;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+}
+
+th {
+    background: #08752b;
+
+    color: #ffffff;
+
+    padding: 13px 10px;
+
+    text-align: center;
+}
+
+td {
+    padding: 12px 10px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    text-align: center;
+}
+
+tbody tr:hover {
+    background: #f3f8f4;
+}
+
+.btn {
+    display: inline-block;
+
+    background: #08752b;
+
+    color: #ffffff;
+
+    padding: 8px 12px;
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    margin: 2px;
+}
+
+.delete-btn {
+    background: #d32f2f;
+
+    color: #ffffff;
+
+    padding: 8px 12px;
+
+    margin: 2px;
+}
+
+.back {
+    display: inline-block;
+
+    margin-top: 20px;
+
+    background: #1565c0;
+
+    color: #ffffff;
+
+    padding: 11px 18px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+}
+
+.empty {
+    text-align: center;
+
+    color: #777;
+
+    padding: 40px;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 750px) {
+
+    .setup-grid {
+        grid-template-columns: 1fr;
     }
 
-    button{
-
-        width:100%;
-
+    .run-buttons {
+        grid-template-columns:
+            repeat(3, 1fr);
     }
 
-    #score{
-
-        font-size:32px;
-
+    .extras-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 
+    .batsmen-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    table {
+        font-size: 13px;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 500px) {
+
+    body {
+        padding: 15px 10px;
+    }
+
+    .app-header {
+        flex-direction: column;
+
+        text-align: center;
+
+        gap: 12px;
+
+        padding: 10px;
+
+        margin-bottom: 20px;
+    }
+
+    .profile-img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .header-text h1 {
+        font-size: 27px;
+    }
+
+    .header-text p {
+        font-size: 13px;
+    }
+
+    .card {
+        padding: 17px;
+
+        border-radius: 13px;
+
+        margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+        font-size: 20px;
+    }
+
+    .scoreboard-card {
+        padding: 23px 16px;
+    }
+
+    .main-score {
+        font-size: 45px;
+    }
+
+    .score-info {
+        grid-template-columns: 1fr;
+    }
+
+    .run-buttons {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .run-buttons button {
+        height: 52px;
+    }
+
+    .extras-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .current-over {
+        font-size: 16px;
+    }
+
+    /* History table scroll on phone */
+
+    .card {
+        overflow-x: auto;
+    }
+
+    table {
+        min-width: 720px;
+    }
+}
+/* =========================================
+   CURRENT OVER - BALL DESIGN
+========================================= */
+
+.current-over {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    min-height: 70px;
+    padding: 15px;
+
+    background: #f4f8f5;
+    border-left: 5px solid #08752b;
+    border-radius: 10px;
+}
+
+
+/* Normal Ball */
+
+.ball {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 42px;
+    height: 42px;
+
+    padding: 0 8px;
+
+    border-radius: 50%;
+
+    background: #08752b;
+    color: white;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+}
+
+
+/* FOUR */
+
+.four-ball {
+    background: #1565c0;
+}
+
+
+/* SIX */
+
+.six-ball {
+    background: #7b1fa2;
+}
+
+
+/* WICKET */
+
+.wicket-ball {
+    background: #d32f2f;
+}
+
+
+/* WIDE */
+
+.wide-ball {
+    background: #0288d1;
+}
+
+
+/* NO BALL */
+
+.noball-ball {
+    background: #f39c12;
+}
+
+
+/* BYE */
+
+.bye-ball {
+    background: #00897b;
+}
+
+
+/* LEG BYE */
+
+.legbye-ball {
+    background: #546e7a;
+}
+
+
+/* No balls message */
+
+.no-balls {
+    color: #777;
+    font-size: 15px;
+    font-weight: 500;
+}
+/* =========================================
+   MODERN OVER HISTORY
+========================================= */
+
+.over-item {
+    display: grid;
+    grid-template-columns: 90px 1fr 90px;
+    align-items: center;
+    gap: 15px;
+
+    background: #ffffff;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+
+    border-left: 5px solid #08752b;
+    border-radius: 10px;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+}
+
+
+/* Over Number */
+
+.over-number {
+    font-size: 16px;
+    font-weight: 700;
+    color: #08752b;
+}
+
+
+/* Ball Container */
+
+.history-balls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+}
+
+
+/* Normal Ball */
+
+.history-ball {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 34px;
+    height: 34px;
+    padding: 0 6px;
+
+    border-radius: 50%;
+
+    background: #08752b;
+    color: white;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* FOUR */
+
+.history-four {
+    background: #1565c0;
+}
+
+
+/* SIX */
+
+.history-six {
+    background: #7b1fa2;
+}
+
+
+/* WICKET */
+
+.history-wicket {
+    background: #d32f2f;
+}
+
+
+/* WIDE */
+
+.history-wide {
+    background: #0288d1;
+}
+
+
+/* NO BALL */
+
+.history-noball {
+    background: #f39c12;
+}
+
+
+/* Score after each over */
+
+.over-total {
+    text-align: right;
+
+    color: #08752b;
+
+    font-size: 19px;
+    font-weight: 800;
+}
+
+
+/* No completed overs */
+
+.history-placeholder {
+    text-align: center;
+    color: #777;
+}
+
+
+/* =========================================
+   MOBILE OVER HISTORY
+========================================= */
+
+@media (max-width: 600px) {
+
+    .over-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .over-total {
+        text-align: left;
+    }
+
+    .history-ball {
+        min-width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+}
+/* =========================================
+   NEW OVER HISTORY DESIGN
+========================================= */
+
+.over-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.over-number {
+    min-width: 75px;
+    color: #08752b;
+    font-size: 16px;
+}
+
+.over-balls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex: 1;
+}
+
+.over-ball {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #08752b;
+    color: white;
+
+    font-weight: bold;
+    font-size: 15px;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.over-ball.four {
+    background: #1565c0;
+}
+
+.over-ball.six {
+    background: #7b1fa2;
+}
+
+.over-ball.wicket-ball {
+    background: #d71920;
+}
+
+.over-ball.extra-ball {
+    background: #f39c12;
+}
+
+.over-score {
+    min-width: 70px;
+    text-align: right;
+
+    color: #08752b;
+    font-size: 18px;
+    font-weight: 700;
+}
+/* =========================================
+   FINAL OVER HISTORY FIX
+========================================= */
+
+#over_history .over-item {
+    display: block !important;
+
+    width: 100%;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+
+    background: #ffffff;
+    border-left: 5px solid #08752b;
+    border-radius: 10px;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+}
+#over_history .over-row {
+    width: 100%;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+
+    gap: 20px;
+}
+
+#over_history .over-number {
+    width: 75px;
+    min-width: 75px;
+
+    color: #08752b;
+    font-weight: 700;
+}
+
+#over_history .over-balls {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+
+    align-items: center;
+    gap: 8px;
+
+    flex: 1;
+}
+
+#over_history .over-ball {
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0;
+
+    border-radius: 50%;
+
+    background: #08752b;
+    color: white;
+
+    font-weight: bold;
+}
+
+#over_history .over-ball.four {
+    background: #1565c0;
+}
+
+#over_history .over-ball.six {
+    background: #7b1fa2;
+}
+
+#over_history .over-ball.wicket-ball {
+    background: #d71920;
+}
+
+#over_history .over-ball.extra-ball {
+    background: #f39c12;
+}
+
+#over_history .over-score {
+    min-width: 75px;
+
+    margin-left: auto;
+
+    text-align: right;
+
+    color: #08752b;
+    font-size: 18px;
+    font-weight: bold;
 }

@@ -4,136 +4,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>🏏 Cricket Score Tracker</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
 
 <div class="container">
 
-    <h1>🏏 Cricket Score Tracker</h1>
+    <!-- =========================
+         APP HEADER
+    ========================== -->
 
-    <!-- Match Setup -->
+    <div class="app-header">
 
-    <div class="card">
+        <img
+            src="{{ url_for('static', filename='images/profile.jpg') }}"
+            alt="Profile"
+            class="profile-img"
+        >
 
-        <h2>Match Setup</h2>
-
-        <input type="text" id="team" placeholder="Team Name">
-
-        <input type="text" id="striker" placeholder="Opening Batsman">
-
-        <input type="text" id="non_striker" placeholder="Non-Striker">
-
-        <input type="number" id="total_overs" placeholder="Total Overs">
-
-        <button class="start-btn" onclick="startMatch()">Start Match</button>
-
-    </div>
-
-    <!-- Scoreboard -->
-
-    <div class="card">
-
-        <h2 id="team_name">Team Name</h2>
-
-        <h1 id="score">0 / 0</h1>
-
-        <h3 id="overs">Overs : 0.0</h3>
-
-        <h3 id="run_rate">Run Rate : 0.00</h3>
+        <div class="header-text">
+            <h1>🏏 Cricket Score Tracker</h1>
+            <p>Live Match Scoring</p>
+        </div>
 
     </div>
 
-    <!-- Batsmen -->
 
-    <div class="card">
+    <!-- =========================
+         MATCH SETUP
+    ========================== -->
 
-        <h2>Batting</h2>
+    <div class="card setup-card">
 
-        <h3 id="striker_name">🏏 Striker : -</h3>
+        <div class="section-title">
+            <h2>⚙️ Match Setup</h2>
+            <p>Enter match details to start scoring</p>
+        </div>
 
-        <h3 id="non_striker_name">🏏 Non-Striker : -</h3>
+        <div class="setup-grid">
+
+            <div class="input-group">
+                <label for="team">Team Name</label>
+                <input
+                    type="text"
+                    id="team"
+                    placeholder="Enter team name"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="striker">Opening Batsman</label>
+                <input
+                    type="text"
+                    id="striker"
+                    placeholder="Enter striker name"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="non_striker">Non-Striker</label>
+                <input
+                    type="text"
+                    id="non_striker"
+                    placeholder="Enter non-striker name"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="total_overs">Total Overs</label>
+                <input
+                    type="number"
+                    id="total_overs"
+                    placeholder="Example: 10"
+                    min="1"
+                >
+            </div>
+
+        </div>
+
+        <button
+            class="start-btn"
+            onclick="startMatch()">
+            ▶ Start Match
+        </button>
 
     </div>
 
-    <!-- Run Buttons -->
 
-    <div class="card">
+    <!-- =========================
+         MAIN SCOREBOARD
+    ========================== -->
 
-        <h2>Runs</h2>
+    <div class="scoreboard-card">
 
-        <button id="btn0" onclick="addRun(0)" disabled>0</button>
+        <div class="team-title">
+            <span>🏏</span>
+            <h2 id="team_name">Team Name</h2>
+        </div>
 
-        <button id="btn1" onclick="addRun(1)" disabled>1</button>
+        <div class="main-score" id="score">
+            0 / 0
+        </div>
 
-        <button id="btn2" onclick="addRun(2)" disabled>2</button>
+        <div class="score-info">
 
-        <button id="btn3" onclick="addRun(3)" disabled>3</button>
+            <div class="score-info-box">
+                <span class="info-label">OVERS</span>
+                <h3 id="overs">Overs : 0.0</h3>
+            </div>
 
-        <button id="btn4" onclick="addRun(4)" disabled>4</button>
+            <div class="score-info-box">
+                <span class="info-label">RUN RATE</span>
+                <h3 id="run_rate">Run Rate : 0.00</h3>
+            </div>
 
-        <button id="btn6" onclick="addRun(6)" disabled>6</button>
-
-    </div>
-
-    <!-- Extras -->
-
-    <div class="card">
-
-        <h2>Extras</h2>
-
-        <button id="wideBtn" onclick="wide()" disabled>Wide</button>
-
-        <button id="noBallBtn" onclick="noBall()" disabled>No Ball</button>
-
-        <button id="byeBtn" onclick="byeRun()" disabled>Bye</button>
-
-        <button id="legByeBtn" onclick="legBye()" disabled>Leg Bye</button>
+        </div>
 
     </div>
 
-    <!-- Match Actions -->
+
+    <!-- =========================
+         BATTING
+    ========================== -->
 
     <div class="card">
 
-        <h2>Match</h2>
+        <div class="section-title">
+            <h2>🏏 Batting</h2>
+        </div>
 
-        <button id="wicketBtn" onclick="wicket()" disabled>Wicket</button>
+        <div class="batsmen-grid">
 
-        <button id="undoBtn" onclick="undoBall()" disabled>Undo</button>
+            <div class="batsman-box striker-box">
 
-        <button id="finishBtn" onclick="finishMatch()" disabled>Finish Match</button>
+                <span class="player-label">
+                    STRIKER
+                </span>
+
+                <h3 id="striker_name">
+                    🏏 Striker : -
+                </h3>
+
+            </div>
+
+
+            <div class="batsman-box">
+
+                <span class="player-label">
+                    NON-STRIKER
+                </span>
+
+                <h3 id="non_striker_name">
+                    🏏 Non-Striker : -
+                </h3>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <!-- Current Over -->
+
+    <!-- =========================
+         RUN BUTTONS
+    ========================== -->
 
     <div class="card">
 
-        <h2>Current Over</h2>
+        <div class="section-title">
+            <h2>🏃 Runs</h2>
+            <p>Select runs scored on the delivery</p>
+        </div>
 
-        <div id="current_over">
+        <div class="run-buttons">
+
+            <button
+                id="btn0"
+                onclick="addRun(0)"
+                disabled>
+                0
+            </button>
+
+            <button
+                id="btn1"
+                onclick="addRun(1)"
+                disabled>
+                1
+            </button>
+
+            <button
+                id="btn2"
+                onclick="addRun(2)"
+                disabled>
+                2
+            </button>
+
+            <button
+                id="btn3"
+                onclick="addRun(3)"
+                disabled>
+                3
+            </button>
+
+            <button
+                id="btn4"
+                class="four-btn"
+                onclick="addRun(4)"
+                disabled>
+                4
+            </button>
+
+            <button
+                id="btn6"
+                class="six-btn"
+                onclick="addRun(6)"
+                disabled>
+                6
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         EXTRAS
+    ========================== -->
+
+    <div class="card">
+
+        <div class="section-title">
+            <h2>➕ Extras</h2>
+        </div>
+
+        <div class="extras-grid">
+
+            <button
+                id="wideBtn"
+                class="wide-btn"
+                onclick="wide()"
+                disabled>
+                Wide
+            </button>
+
+            <button
+                id="noBallBtn"
+                class="noball-btn"
+                onclick="noBall()"
+                disabled>
+                No Ball
+            </button>
+
+            <button
+                id="byeBtn"
+                class="bye-btn"
+                onclick="byeRun()"
+                disabled>
+                Bye
+            </button>
+
+            <button
+                id="legByeBtn"
+                class="legbye-btn"
+                onclick="legBye()"
+                disabled>
+                Leg Bye
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MATCH ACTIONS
+    ========================== -->
+
+    <div class="card">
+
+        <div class="section-title">
+            <h2>🎮 Match Actions</h2>
+        </div>
+
+        <div class="action-grid">
+
+            <button
+                id="wicketBtn"
+                class="wicket-btn"
+                onclick="wicket()"
+                disabled>
+                🔴 Wicket
+            </button>
+
+            <button
+                id="undoBtn"
+                class="undo-btn"
+                onclick="undoBall()"
+                disabled>
+                ↩ Undo
+            </button>
+
+            <button
+                id="finishBtn"
+                class="finish-btn"
+                onclick="finishMatch()"
+                disabled>
+                🏁 Finish Match
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CURRENT OVER
+    ========================== -->
+
+    <div class="card">
+
+        <div class="section-title">
+            <h2>🎯 Current Over</h2>
+        </div>
+
+        <div
+            id="current_over"
+            class="current-over">
             -
         </div>
 
     </div>
 
-    <!-- Over History -->
+
+    <!-- =========================
+         OVER HISTORY
+    ========================== -->
 
     <div class="card">
 
-        <h2>Over History</h2>
+        <div class="section-title">
+            <h2>📋 Over History</h2>
+        </div>
 
-        <div id="over_history">
+        <div
+            id="over_history"
+            class="over-history">
+
+            <p class="history-placeholder">
+                Completed overs will appear here.
+            </p>
 
         </div>
 
     </div>
 
+
+    <!-- =========================
+         HISTORY LINK
+    ========================== -->
+
+    <div class="bottom-navigation">
+
+        <a
+            href="{{ url_for('history') }}"
+            class="history-btn">
+            📊 View Match History
+        </a>
+
+    </div>
+
 </div>
+
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 

@@ -162,17 +162,66 @@ function changeStrike() {
 
 function finishOver() {
 
-    overHistory.push(currentOver.join(" "));
+    const overData = {
+        balls: [...currentOver],
+        score: totalRuns,
+        wickets: wickets
+    };
 
-    document.getElementById("over_history").innerHTML +=
-        "<p><b>Over " +
-        overHistory.length +
-        " :</b> " +
-        currentOver.join(" ") +
-        "</p>";
+    overHistory.push(overData);
+
+    const overNumber = overHistory.length;
+
+    const ballsHTML = overData.balls.map(ball => {
+
+        let ballClass = "over-ball";
+
+        if (ball === "4") {
+            ballClass += " four";
+        }
+
+        if (ball === "6") {
+            ballClass += " six";
+        }
+
+        if (String(ball).includes("W")) {
+            ballClass += " wicket-ball";
+        }
+
+        if (
+            String(ball).includes("Wd") ||
+            String(ball).includes("Nb")
+        ) {
+            ballClass += " extra-ball";
+        }
+
+        return `<span class="${ballClass}">${ball}</span>`;
+
+    }).join("");
+
+    document.getElementById("over_history").innerHTML += `
+        <div class="over-item">
+            <div class="over-row">
+
+                <strong class="over-number">
+                    Over ${overNumber}
+                </strong>
+
+                <div class="over-balls">
+                    ${ballsHTML}
+                </div>
+
+                <strong class="over-score">
+                    ${overData.score}/${overData.wickets}
+                </strong>
+
+            </div>
+        </div>
+    `;
 
     currentOver = [];
 
+    updateCurrentOver();
 }
 
 
@@ -226,9 +275,7 @@ function updateScoreboard() {
         nonStrikerBalls +
         ")";
 
-    document.getElementById("current_over").innerHTML =
-        currentOver.join(" ");
-
+    updateCurrentOver();
 }
 
 // ==============================
@@ -320,18 +367,70 @@ function wide() {
 
 function noBall() {
 
-    totalRuns++;
+    let batRuns = prompt(
+        "No Ball - Enter batsman runs:\n\n" +
+        "0 = No Ball only (+1)\n" +
+        "1 = No Ball + 1 run (+2)\n" +
+        "2 = No Ball + 2 runs (+3)\n" +
+        "3 = No Ball + 3 runs (+4)\n" +
+        "4 = No Ball + FOUR (+5)\n" +
+        "6 = No Ball + SIX (+7)"
+    );
 
-    currentOver.push("Nb");
+    if (batRuns === null) {
+        return;
+    }
+
+    batRuns = parseInt(batRuns);
+
+    if (![0, 1, 2, 3, 4, 6].includes(batRuns)) {
+        alert("Please enter 0, 1, 2, 3, 4 or 6.");
+        return;
+    }
+
+    // 1 automatic extra run for No Ball
+    totalRuns += 1 + batRuns;
+
+    // Batsman receives only bat runs
+    strikerRuns += batRuns;
+
+    // No Ball counts as a ball faced by batsman,
+    // but NOT as a legal delivery in the over
+    strikerBalls++;
+
+    if (batRuns === 4) {
+        strikerFours++;
+    }
+
+    if (batRuns === 6) {
+        strikerSixes++;
+    }
+
+    // Example: Nb, Nb+1, Nb+4, Nb+6
+    let display = "Nb";
+
+    if (batRuns > 0) {
+        display = "Nb+" + batRuns;
+    }
+
+    currentOver.push(display);
 
     ballHistory.push({
-        type: "noball"
+        type: "noball",
+        batRuns: batRuns
     });
 
+    // Odd batsman runs change strike
+    if (batRuns === 1 || batRuns === 3) {
+        changeStrike();
+    }
+
+    // IMPORTANT:
+    // Do NOT increase balls here.
+    // A No Ball is not a legal delivery.
+
     updateScoreboard();
-
 }
-
 
 
 // ==============================
@@ -441,96 +540,206 @@ function checkMatchEnd() {
 // Undo Last Ball
 // ==============================
 
+// ==============================
+// Undo Last Ball
+// ==============================
+
 function undoBall() {
 
     if (ballHistory.length === 0) {
-
         alert("Nothing to Undo");
         return;
-
     }
 
-    let last = ballHistory.pop();
+    const last = ballHistory.pop();
 
-    switch (last.type) {
+    // =====================================
+    // If previous ball completed an over,
+    // reopen that completed over first
+    // =====================================
 
-        case "run":
+    if (currentOver.length === 0 && overHistory.length > 0) {
 
-            totalRuns -= last.run;
-            balls--;
+        const lastOver = overHistory.pop();
 
-            strikerRuns -= last.run;
-            strikerBalls--;
+        currentOver = lastOver.balls
+            ? lastOver.balls.split(" ")
+            : [];
 
-            if (last.run === 4)
-                strikerFours--;
+        // At the end of an over we changed strike.
+        // Reverse that change before undoing the ball.
+        changeStrike();
 
-            if (last.run === 6)
-                strikerSixes--;
-
-            currentOver.pop();
-
-            break;
-
-
-        case "wicket":
-
-            wickets--;
-            balls--;
-
-            strikerBalls--;
-
-            currentOver.pop();
-
-            alert("Undo Wicket Completed");
-            break;
-
-
-        case "wide":
-
-            totalRuns--;
-
-            currentOver.pop();
-
-            break;
-
-
-        case "noball":
-
-            totalRuns--;
-
-            currentOver.pop();
-
-            break;
-
-
-        case "bye":
-
-            totalRuns -= last.run;
-            balls--;
-
-            strikerBalls--;
-
-            currentOver.pop();
-
-            break;
-
-
-        case "legbye":
-
-            totalRuns -= last.run;
-            balls--;
-
-            strikerBalls--;
-
-            currentOver.pop();
-
-            break;
-
+        refreshOverHistory();
     }
 
+
+    // =====================================
+    // NORMAL RUN
+    // =====================================
+
+    if (last.type === "run") {
+
+        // If odd run changed strike,
+        // reverse the strike first.
+        if (last.run === 1 || last.run === 3) {
+            changeStrike();
+        }
+
+        totalRuns -= last.run;
+        balls--;
+
+        strikerRuns -= last.run;
+        strikerBalls--;
+
+        if (last.run === 4) {
+            strikerFours--;
+        }
+
+        if (last.run === 6) {
+            strikerSixes--;
+        }
+
+        currentOver.pop();
+    }
+
+
+    // =====================================
+    // WICKET
+    // =====================================
+
+    else if (last.type === "wicket") {
+
+        wickets--;
+        balls--;
+
+        /*
+           The wicket function replaces the striker
+           with a new batsman.
+
+           Your current ballHistory only stores the
+           dismissed batsman's name, so restore that
+           batsman's name here.
+        */
+
+        strikerName = last.batsman;
+
+        strikerRuns = 0;
+        strikerBalls = 0;
+        strikerFours = 0;
+        strikerSixes = 0;
+
+        currentOver.pop();
+    }
+
+
+    // =====================================
+    // WIDE
+    // =====================================
+
+    else if (last.type === "wide") {
+
+        totalRuns--;
+
+        // Wide does NOT reduce legal balls.
+        currentOver.pop();
+    }
+
+
+    // =====================================
+    // NO BALL
+    // =====================================
+
+    else if (last.type === "noball") {
+
+        // Odd bat runs changed strike.
+        if (last.batRuns === 1 || last.batRuns === 3) {
+            changeStrike();
+        }
+
+        totalRuns -= (1 + last.batRuns);
+
+        strikerRuns -= last.batRuns;
+        strikerBalls--;
+
+        if (last.batRuns === 4) {
+            strikerFours--;
+        }
+
+        if (last.batRuns === 6) {
+            strikerSixes--;
+        }
+
+        // No Ball was not a legal delivery,
+        // so do NOT decrease balls.
+        currentOver.pop();
+    }
+
+
+    // =====================================
+    // BYE
+    // =====================================
+
+    else if (last.type === "bye") {
+
+        // Odd bye changed strike.
+        if (last.run % 2 === 1) {
+            changeStrike();
+        }
+
+        totalRuns -= last.run;
+        balls--;
+
+        strikerBalls--;
+
+        currentOver.pop();
+    }
+
+
+    // =====================================
+    // LEG BYE
+    // =====================================
+
+    else if (last.type === "legbye") {
+
+        // Odd leg bye changed strike.
+        if (last.run % 2 === 1) {
+            changeStrike();
+        }
+
+        totalRuns -= last.run;
+        balls--;
+
+        strikerBalls--;
+
+        currentOver.pop();
+    }
+
+
+    // =====================================
+    // Safety
+    // =====================================
+
+    if (totalRuns < 0) {
+        totalRuns = 0;
+    }
+
+    if (balls < 0) {
+        balls = 0;
+    }
+
+    if (wickets < 0) {
+        wickets = 0;
+    }
+
+
+    // =====================================
+    // Refresh Screen
+    // =====================================
+
+    refreshOverHistory();
+    updateCurrentOver();
     updateScoreboard();
-
 }
 
 
@@ -541,9 +750,76 @@ function undoBall() {
 
 function updateCurrentOver() {
 
-    document.getElementById("current_over").innerHTML =
-        currentOver.join(" ");
+    const currentOverElement =
+        document.getElementById("current_over");
 
+    if (currentOver.length === 0) {
+
+        currentOverElement.innerHTML =
+            '<span class="no-balls">No balls yet</span>';
+
+        return;
+    }
+
+    let html = "";
+
+    currentOver.forEach(ball => {
+
+        let ballClass = "ball";
+
+        // Wicket
+        if (ball === "W") {
+            ballClass += " wicket-ball";
+        }
+
+        // Four
+        else if (ball === 4 || ball === "4") {
+            ballClass += " four-ball";
+        }
+
+        // Six
+        else if (ball === 6 || ball === "6") {
+            ballClass += " six-ball";
+        }
+
+        // Wide
+        else if (
+            String(ball).toLowerCase().includes("wd")
+        ) {
+            ballClass += " wide-ball";
+        }
+
+        // No Ball
+        else if (
+            String(ball).toLowerCase().includes("nb")
+        ) {
+            ballClass += " noball-ball";
+        }
+
+        // Bye
+        else if (
+            String(ball).endsWith("B") &&
+            !String(ball).endsWith("LB")
+        ) {
+            ballClass += " bye-ball";
+        }
+
+        // Leg Bye
+        else if (
+            String(ball).endsWith("LB")
+        ) {
+            ballClass += " legbye-ball";
+        }
+
+        html +=
+            '<span class="' +
+            ballClass +
+            '">' +
+            ball +
+            '</span>';
+    });
+
+    currentOverElement.innerHTML = html;
 }
 
 
@@ -554,23 +830,119 @@ function updateCurrentOver() {
 
 function refreshOverHistory() {
 
-    let html = "";
+    const historyDiv =
+        document.getElementById("over_history");
 
-    for (let i = 0; i < overHistory.length; i++) {
+    historyDiv.innerHTML = "";
 
-        html +=
-            "<p><b>Over " +
-            (i + 1) +
-            " :</b> " +
-            overHistory[i] +
-            "</p>";
+    if (overHistory.length === 0) {
 
+        historyDiv.innerHTML =
+            '<p class="history-placeholder">' +
+            'No completed overs yet' +
+            '</p>';
+
+        return;
     }
 
-    document.getElementById("over_history").innerHTML = html;
+    overHistory.forEach((over, index) => {
+
+        const row = document.createElement("div");
+
+        row.className = "over-item";
+
+
+        // ==========================
+        // Ball circles
+        // ==========================
+
+        let ballsHTML = "";
+
+        const balls = over.balls
+            ? over.balls.split(" ")
+            : [];
+
+
+        balls.forEach(ball => {
+
+            let ballClass = "history-ball";
+
+
+            // Wicket
+            if (ball === "W") {
+
+                ballClass += " history-wicket";
+
+            }
+
+            // Four
+            else if (ball === "4") {
+
+                ballClass += " history-four";
+
+            }
+
+            // Six
+            else if (ball === "6") {
+
+                ballClass += " history-six";
+
+            }
+
+            // Wide
+            else if (
+                ball.toLowerCase().includes("wd")
+            ) {
+
+                ballClass += " history-wide";
+
+            }
+
+            // No Ball
+            else if (
+                ball.toLowerCase().includes("nb")
+            ) {
+
+                ballClass += " history-noball";
+
+            }
+
+
+            ballsHTML +=
+                '<span class="' +
+                ballClass +
+                '">' +
+                ball +
+                '</span>';
+        });
+
+
+        // ==========================
+        // Complete Over Row
+        // ==========================
+
+        row.innerHTML = `
+
+            <div class="over-number">
+                Over ${index + 1}
+            </div>
+
+            <div class="history-balls">
+                ${ballsHTML}
+            </div>
+
+            <div class="over-total">
+                ${over.totalScore}/${over.wickets}
+            </div>
+
+        `;
+
+
+        historyDiv.appendChild(row);
+
+    });
 
 }
-
 
 
 // ==============================

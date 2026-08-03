@@ -125,16 +125,17 @@ def save_match_api():
 
     for over_no, over in enumerate(data.get("over_history", []), start=1):
 
+        balls = str(over.get("balls", ""))
+        score = over.get("score", 0)
+        wickets = over.get("wickets", 0)
+
+        event = f"{balls} -> {score}/{wickets}"
+
         save_ball(
-
             match_id,
-
             over_no,
-
             0,
-
-            over
-
+            event
         )
 
     return jsonify({
