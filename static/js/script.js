@@ -120,6 +120,10 @@ function initializeScorePage() {
     dismissedBatsmen = [];
 
     document.getElementById("team_name").textContent = setup.team;
+    const stickyTeam = document.getElementById("sticky_team_name");
+    if (stickyTeam) {
+        stickyTeam.textContent = setup.team;
+    }
 
     updateScoreboard();
     enableButtons();
@@ -397,6 +401,20 @@ function updateScoreboard() {
 
     renderDismissedBatsmen();
     updateCurrentOver();
+
+    // Update sticky scoreboard if elements exist
+    const stickyScore = document.getElementById("sticky_score");
+    if (stickyScore) {
+        stickyScore.innerHTML = totalRuns + " / " + wickets;
+    }
+    const stickyOvers = document.getElementById("sticky_overs");
+    if (stickyOvers) {
+        stickyOvers.innerHTML = over + " ov";
+    }
+    const stickyRunRate = document.getElementById("sticky_run_rate");
+    if (stickyRunRate) {
+        stickyRunRate.innerHTML = "RR: " + calculateRunRate();
+    }
 }
 
 // ==============================
@@ -1398,6 +1416,24 @@ function resetMatch() {
 
 document.addEventListener("DOMContentLoaded", function () {
     initializeScorePage();
+
+    // Add sticky scorebar scroll listener
+    const scorePage = document.getElementById("score");
+    if (scorePage) {
+        window.addEventListener('scroll', function() {
+            const mainScoreboard = document.querySelector('.scoreboard-card');
+            const stickyBar = document.getElementById('sticky_score_bar');
+            if (mainScoreboard && stickyBar) {
+                const scoreboardBottom = mainScoreboard.getBoundingClientRect().bottom;
+                // Show sticky bar when the main scoreboard starts to scroll out of view (using 60px as buffer)
+                if (scoreboardBottom < 60) {
+                    stickyBar.classList.add('visible');
+                } else {
+                    stickyBar.classList.remove('visible');
+                }
+            }
+        });
+    }
 });
 
 console.log("🏏 Cricket Score Tracker Loaded Successfully");

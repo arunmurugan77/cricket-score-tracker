@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -22,9 +22,28 @@
 
 <body>
 
+<!-- =========================
+     STICKY MINI SCOREBOARD (MOBILE-OPTIMIZED)
+========================== -->
+<div class="sticky-score-bar" id="sticky_score_bar">
+    <div class="sticky-score-content">
+        <div class="sticky-left">
+            <span class="sticky-team-icon">🏏</span>
+            <span class="sticky-team" id="sticky_team_name">Team Name</span>
+        </div>
+        <div class="sticky-center">
+            <span id="sticky_score" class="sticky-score">0 / 0</span>
+        </div>
+        <div class="sticky-right">
+            <span id="sticky_overs" class="sticky-overs">0.0 ov</span>
+            <span id="sticky_run_rate" class="sticky-rr">RR: 0.00</span>
+        </div>
+    </div>
+</div>
+
 <div class="container">
 
-    <div class="app-header">
+    <div class="app-header score-header">
 
         <img
             src="{{ url_for('static', filename='images/profile.jpg') }}"

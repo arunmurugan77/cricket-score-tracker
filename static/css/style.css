@@ -1057,4 +1057,293 @@ tbody tr:last-child td {
         width: 100%;
         text-align: center;
     }
+    
+    /* Mobile Spacing Optimizations for Live Score dashboard */
+    .score-header {
+        display: none !important; /* Hide profile header only on scoring dashboard on mobile */
+    }
+
+    body {
+        padding: 4px 6px !important;
+    }
+
+    .container {
+        padding: 0 4px !important;
+    }
+
+    /* Target the first 5 cards: Batting, Runs, Extras, Actions, Current Over */
+    .container > .card:nth-of-type(-n+5) {
+        padding: 8px 10px !important;
+        margin-bottom: 6px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    /* Hide headers for active scoring cards */
+    .container > .card:nth-of-type(-n+5) .section-title {
+        display: none !important;
+    }
+
+    /* Batsmen Grid (Side-by-side Striker and Non-Striker) */
+    .batsmen-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+
+    .batsman-box {
+        padding: 6px 8px !important;
+        border-radius: 8px !important;
+        border-width: 1.5px !important;
+    }
+
+    .player-label {
+        font-size: 9px !important;
+        margin-bottom: 2px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .batsman-box h3 {
+        font-size: 11px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Runs Buttons - All 7 buttons in one compact row! */
+    .run-buttons {
+        grid-template-columns: repeat(7, 1fr) !important;
+        gap: 4px !important;
+    }
+
+    .run-buttons button {
+        height: 40px !important;
+        font-size: 14px !important;
+        border-radius: 6px !important;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Extras Grid - 4 buttons in one compact row! */
+    .extras-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 4px !important;
+    }
+
+    .extras-grid button {
+        height: 38px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Actions Grid - 3 buttons in one compact row! */
+    .action-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+    }
+
+    .action-grid button {
+        height: 38px !important;
+        font-size: 11px !important;
+        border-radius: 6px !important;
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Current Over */
+    .current-over {
+        min-height: 42px !important;
+        padding: 6px 10px !important;
+        border-radius: 8px !important;
+        gap: 6px !important;
+    }
+
+    .ball {
+        min-width: 28px !important;
+        height: 28px !important;
+        font-size: 11px !important;
+    }
+
+    /* Scoreboard Card - Ultra Compact */
+    .scoreboard-card {
+        padding: 12px 10px !important;
+        border-radius: 12px !important;
+        margin-bottom: 6px !important;
+        box-shadow: 0 10px 25px rgba(31, 124, 79, 0.2) !important;
+    }
+
+    .team-title {
+        margin-bottom: 4px !important;
+        font-size: 14px !important;
+        gap: 6px !important;
+    }
+
+    .team-title h2 {
+        font-size: 1rem !important;
+    }
+
+    .main-score {
+        font-size: 1.8rem !important;
+        margin: 6px 0 8px !important;
+    }
+
+    .score-info {
+        grid-template-columns: 1fr 1fr !important; /* Side-by-side Overs and RR */
+        gap: 8px !important;
+    }
+
+    .score-info-box {
+        padding: 6px !important;
+        border-radius: 8px !important;
+    }
+
+    .info-label {
+        font-size: 9px !important;
+        margin-bottom: 2px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .score-info-box h3 {
+        font-size: 12px !important;
+    }
+}
+
+/* ==================== STICKY SCORE BAR ==================== */
+.sticky-score-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 27, 42, 0.9); /* Sleek glass dark color matching app background */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    z-index: 1000;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    padding: 8px 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.sticky-score-bar.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sticky-score-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffffff;
+}
+
+.sticky-left, .sticky-center, .sticky-right {
+    display: flex;
+    align-items: center;
+}
+
+.sticky-left {
+    flex: 1;
+    justify-content: flex-start;
+    min-width: 0;
+    gap: 6px;
+}
+
+.sticky-center {
+    flex: 1;
+    justify-content: center;
+}
+
+.sticky-right {
+    flex: 1;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.sticky-team-icon {
+    font-size: 16px;
+}
+
+.sticky-team {
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffffff;
+}
+
+.sticky-score {
+    font-size: 16px;
+    font-weight: 900;
+    color: #2ecc71; /* Vibrant cricket green */
+    background: rgba(46, 204, 113, 0.12);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+}
+
+.sticky-overs {
+    font-size: 12px;
+    font-weight: 600;
+    color: #f39c12; /* Warm orange */
+    background: rgba(243, 156, 18, 0.1);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.sticky-rr {
+    font-size: 12px;
+    font-weight: 600;
+    color: #a5b1c2;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 500px) {
+    .sticky-score-bar {
+        padding: 8px 12px;
+    }
+    
+    .sticky-team {
+        font-size: 13px;
+        max-width: 90px;
+    }
+    
+    .sticky-score {
+        font-size: 15px;
+        padding: 2px 8px;
+    }
+    
+    .sticky-overs {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+    
+    .sticky-rr {
+        font-size: 11px;
+    }
+    
+    .sticky-right {
+        gap: 6px;
+    }
+}
+
+@media (max-width: 360px) {
+    .sticky-team {
+        max-width: 60px;
+    }
+    .sticky-rr {
+        display: none;
+    }
 }
