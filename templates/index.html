@@ -312,48 +312,9 @@
             return;
         }
 
-        const updateSuggestions = async () => {
-            const query = input.value.trim().toLowerCase();
+        const renderSuggestions = (list) => {
             suggestions.innerHTML = "";
-
-            if (query.length === 0) {
-                return;
-            }
-
-            // 1. Get matches from Local Storage
-            let localMatched = [];
-            try {
-                const savedPlayers = JSON.parse(
-                    localStorage.getItem("cricketPlayerNames") || "[]"
-                );
-                localMatched = savedPlayers.filter(name =>
-                    name.toLowerCase().includes(query)
-                );
-            } catch (error) {
-                console.log("Local suggestions error:", error);
-            }
-
-            // 2. Get matches from Server Database
-            let dbMatched = [];
-            try {
-                const response = await fetch(
-                    "/players?search=" + encodeURIComponent(query)
-                );
-                dbMatched = await response.json();
-            } catch (error) {
-                console.log("DB suggestions error:", error);
-            }
-
-            // Combine lists, removing duplicates (case-insensitive)
-            const combined = [...localMatched];
-            dbMatched.forEach(name => {
-                if (!combined.some(c => c.toLowerCase() === name.toLowerCase())) {
-                    combined.push(name);
-                }
-            });
-
-            // Render combined suggestions
-            combined.slice(0, 10).forEach(player => {
+            list.slice(0, 10).forEach(player => {
                 const item = document.createElement("div");
                 item.className = "suggestion-item";
                 item.textContent = player;
@@ -365,6 +326,62 @@
 
                 suggestions.appendChild(item);
             });
+        };
+
+        const updateSuggestions = async () => {
+            const query = input.value.trim().toLowerCase();
+            suggestions.innerHTML = "";
+
+            if (query.length === 0) {
+                return;
+            }
+
+            // 1. Get matches from Local Storage (ensuring distinct names and startsWith match)
+            let localMatched = [];
+            try {
+                const savedPlayers = JSON.parse(
+                    localStorage.getItem("cricketPlayerNames") || "[]"
+                );
+                
+                // Get unique items
+                const uniqueSaved = [];
+                savedPlayers.forEach(name => {
+                    if (name && !uniqueSaved.some(u => u.toLowerCase() === name.toLowerCase())) {
+                        uniqueSaved.push(name);
+                    }
+                });
+
+                // Match starting with query
+                localMatched = uniqueSaved.filter(name =>
+                    name.toLowerCase().startsWith(query)
+                );
+            } catch (error) {
+                console.log("Local suggestions error:", error);
+            }
+
+            // Show local matches instantly (0ms latency!)
+            renderSuggestions(localMatched);
+
+            // 2. Fetch matches from Server Database asynchronously
+            try {
+                const response = await fetch(
+                    "/players?search=" + encodeURIComponent(query)
+                );
+                const dbMatched = await response.json();
+
+                // Combine, removing duplicates
+                const combined = [...localMatched];
+                dbMatched.forEach(name => {
+                    if (!combined.some(c => c.toLowerCase() === name.toLowerCase())) {
+                        combined.push(name);
+                    }
+                });
+
+                // Update layout with the combined list
+                renderSuggestions(combined);
+            } catch (error) {
+                console.log("DB suggestions error:", error);
+            }
         };
 
         input.addEventListener("input", updateSuggestions);

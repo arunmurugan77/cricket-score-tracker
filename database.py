@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sqlite3
 from datetime import datetime, timezone, timedelta
 
@@ -405,7 +405,7 @@ def get_player_suggestions(search):
 
     if isinstance(conn, sqlite3.Connection):
         query = """
-            SELECT player_name
+            SELECT DISTINCT player_name
             FROM players
             WHERE LOWER(player_name) LIKE LOWER(?)
             ORDER BY player_name ASC
@@ -414,13 +414,13 @@ def get_player_suggestions(search):
         cursor.execute(query, (search + "%",))
     else:
         cursor.execute("""
-            SELECT player_name
+            SELECT DISTINCT player_name
             FROM players
             WHERE player_name ILIKE %s
             ORDER BY player_name ASC
             LIMIT 10
         """, (
-            search + "%"
+            search + "%",
         ))
 
     players = cursor.fetchall()

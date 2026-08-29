@@ -17,12 +17,6 @@
 
     <div class="history-header">
 
-        <img
-            src="{{ url_for('static', filename='images/profile.jpg') }}"
-            alt="Profile"
-            class="profile-img"
-        >
-
         <div>
             <h1>🏏 Match History</h1>
             <p>View and manage your saved matches</p>
@@ -108,7 +102,7 @@
 
                                 <button
                                     type="button"
-                                    class="delete-btn"
+                                    class="btn delete-btn"
                                     data-match-id="{{ match[0] }}"
                                     onclick="deleteMatch(this.dataset.matchId)">
                                     🗑 Delete
@@ -160,6 +154,10 @@
 <script>
 
 function deleteMatch(matchId) {
+
+    if (!confirm("⚠️ Are you sure you want to delete this match? This action cannot be undone.")) {
+        return;
+    }
 
     fetch("/delete/" + matchId)
 
