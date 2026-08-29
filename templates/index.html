@@ -189,24 +189,18 @@
     // ==========================================
 
     function saveTeamName(teamName) {
-
         if (!teamName) {
             return;
         }
-
         try {
             const saved = JSON.parse(
                 localStorage.getItem("cricketTeamNames") || "[]"
             );
-
             const cleaned = saved.filter(
                 team => team.toLowerCase() !== teamName.toLowerCase()
             );
-
             cleaned.unshift(teamName);
-
-            const finalList = cleaned.slice(0, 10);
-
+            const finalList = cleaned.slice(0, 30); // Store up to 30 unique teams
             localStorage.setItem(
                 "cricketTeamNames",
                 JSON.stringify(finalList)
@@ -217,9 +211,29 @@
         }
     }
 
+    // ==========================================
+    // Delete Team Name Locally
+    // ==========================================
+
+    function deleteTeamNameLocally(teamName) {
+        if (!teamName) return;
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem("cricketTeamNames") || "[]"
+            );
+            const cleaned = saved.filter(
+                name => name.toLowerCase() !== teamName.toLowerCase()
+            );
+            localStorage.setItem(
+                "cricketTeamNames",
+                JSON.stringify(cleaned)
+            );
+        } catch (error) {
+            console.log("Team local delete error:", error);
+        }
+    }
 
     function setupTeamSuggestions() {
-
         const input = document.getElementById("team");
         const suggestions = document.getElementById("teamSuggestions");
 
@@ -227,12 +241,85 @@
             return;
         }
 
-        const updateSuggestions = () => {
-
-            const query = input.value.trim().toLowerCase();
+        const renderTeamSuggestions = (list) => {
             suggestions.innerHTML = "";
+            list.slice(0, 10).forEach(team => {
+                const item = document.createElement("div");
+                item.className = "suggestion-item";
 
+                // Text label
+                const nameSpan = document.createElement("span");
+                nameSpan.textContent = team;
+                item.appendChild(nameSpan);
+
+                // Delete 'x' button
+                const deleteBtn = document.createElement("span");
+                deleteBtn.className = "suggestion-delete-btn";
+                deleteBtn.innerHTML = "×";
+                deleteBtn.title = "Delete team";
+
+                deleteBtn.onclick = function (e) {
+                    e.stopPropagation(); // Prevent select team trigger
+                    if (confirm("⚠️ Delete team '" + team + "' from suggestions?")) {
+                        deleteTeamNameLocally(team);
+                        updateSuggestions(); // Reload list
+                    }
+                };
+
+                item.appendChild(deleteBtn);
+
+                // Long Press (Mobile Touch & Desktop Mouse Hold)
+                let pressTimer;
+                let isLongPress = false;
+
+                const startPress = (e) => {
+                    clearTimeout(pressTimer);
+                    isLongPress = false;
+                    pressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        if (confirm("⚠️ Delete team '" + team + "' from suggestions?")) {
+                            deleteTeamNameLocally(team);
+                            updateSuggestions();
+                        }
+                    }, 750);
+                };
+
+                const cancelPress = () => {
+                    clearTimeout(pressTimer);
+                };
+
+                // Touch Events (Mobile)
+                item.addEventListener("touchstart", startPress, { passive: true });
+                item.addEventListener("touchend", cancelPress);
+                item.addEventListener("touchmove", cancelPress);
+                item.addEventListener("touchcancel", cancelPress);
+
+                // Mouse Events (Desktop)
+                item.addEventListener("mousedown", (e) => {
+                    if (e.button === 0) startPress(e);
+                });
+                item.addEventListener("mouseup", cancelPress);
+                item.addEventListener("mouseleave", cancelPress);
+
+                // Click item to select
+                item.onclick = function () {
+                    if (isLongPress) {
+                        isLongPress = false;
+                        return;
+                    }
+                    input.value = team;
+                    suggestions.innerHTML = "";
+                };
+
+                suggestions.appendChild(item);
+            });
+        };
+
+        const updateSuggestions = () => {
+            const query = input.value.trim().toLowerCase();
+            
             if (query.length === 0) {
+                suggestions.innerHTML = "";
                 return;
             }
 
@@ -241,23 +328,20 @@
                     localStorage.getItem("cricketTeamNames") || "[]"
                 );
 
-                const matched = savedTeams.filter(team =>
-                    team.toLowerCase().includes(query)
+                // Filter duplicates
+                const uniqueTeams = [];
+                savedTeams.forEach(name => {
+                    if (name && !uniqueTeams.some(u => u.toLowerCase() === name.toLowerCase())) {
+                        uniqueTeams.push(name);
+                    }
+                });
+
+                // Match starting with query
+                const matched = uniqueTeams.filter(team =>
+                    team.toLowerCase().startsWith(query)
                 );
 
-                matched.forEach(team => {
-
-                    const item = document.createElement("div");
-                    item.className = "suggestion-item";
-                    item.textContent = team;
-
-                    item.onclick = function () {
-                        input.value = team;
-                        suggestions.innerHTML = "";
-                    };
-
-                    suggestions.appendChild(item);
-                });
+                renderTeamSuggestions(matched);
             }
             catch (error) {
                 console.log("Team suggestion error:", error);
@@ -267,10 +351,7 @@
         input.addEventListener("input", updateSuggestions);
 
         document.addEventListener("click", function (event) {
-            if (
-                event.target !== input &&
-                !suggestions.contains(event.target)
-            ) {
+            if (event.target !== input && !suggestions.contains(event.target)) {
                 suggestions.innerHTML = "";
             }
         });
@@ -617,6 +698,30 @@
         "non_striker",
         "nonStrikerSuggestions"
     );
+
+    // ==========================================
+    // Close Suggestions on Focus Change
+    // ==========================================
+    const allInputs = ["team", "striker", "non_striker", "total_overs"];
+    allInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener("focus", function() {
+                if (id !== "team") {
+                    const teamSuggestions = document.getElementById("teamSuggestions");
+                    if (teamSuggestions) teamSuggestions.innerHTML = "";
+                }
+                if (id !== "striker") {
+                    const strikerSuggestions = document.getElementById("strikerSuggestions");
+                    if (strikerSuggestions) strikerSuggestions.innerHTML = "";
+                }
+                if (id !== "non_striker") {
+                    const nonStrikerSuggestions = document.getElementById("nonStrikerSuggestions");
+                    if (nonStrikerSuggestions) nonStrikerSuggestions.innerHTML = "";
+                }
+            });
+        }
+    });
 
 </script>
 
