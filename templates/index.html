@@ -2,21 +2,31 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>🏏 Cricket Score Tracker</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
 </head>
+
 
 <body>
 
 <div class="container">
 
+
     <!-- =========================
-         APP HEADER
+         HEADER
     ========================== -->
 
     <div class="app-header">
@@ -28,11 +38,15 @@
         >
 
         <div class="header-text">
+
             <h1>🏏 Cricket Score Tracker</h1>
+
             <p>Live Match Scoring</p>
+
         </div>
 
     </div>
+
 
 
     <!-- =========================
@@ -42,346 +56,453 @@
     <div class="card setup-card">
 
         <div class="section-title">
+
             <h2>⚙️ Match Setup</h2>
-            <p>Enter match details to start scoring</p>
-        </div>
 
-        <div class="setup-grid">
-
-            <div class="input-group">
-                <label for="team">Team Name</label>
-                <input
-                    type="text"
-                    id="team"
-                    placeholder="Enter team name"
-                >
-            </div>
-
-            <div class="input-group">
-                <label for="striker">Opening Batsman</label>
-                <input
-                    type="text"
-                    id="striker"
-                    placeholder="Enter striker name"
-                >
-            </div>
-
-            <div class="input-group">
-                <label for="non_striker">Non-Striker</label>
-                <input
-                    type="text"
-                    id="non_striker"
-                    placeholder="Enter non-striker name"
-                >
-            </div>
-
-            <div class="input-group">
-                <label for="total_overs">Total Overs</label>
-                <input
-                    type="number"
-                    id="total_overs"
-                    placeholder="Example: 10"
-                    min="1"
-                >
-            </div>
-
-        </div>
-
-        <button
-            class="start-btn"
-            onclick="startMatch()">
-            ▶ Start Match
-        </button>
-
-    </div>
-
-
-    <!-- =========================
-         MAIN SCOREBOARD
-    ========================== -->
-
-    <div class="scoreboard-card">
-
-        <div class="team-title">
-            <span>🏏</span>
-            <h2 id="team_name">Team Name</h2>
-        </div>
-
-        <div class="main-score" id="score">
-            0 / 0
-        </div>
-
-        <div class="score-info">
-
-            <div class="score-info-box">
-                <span class="info-label">OVERS</span>
-                <h3 id="overs">Overs : 0.0</h3>
-            </div>
-
-            <div class="score-info-box">
-                <span class="info-label">RUN RATE</span>
-                <h3 id="run_rate">Run Rate : 0.00</h3>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         BATTING
-    ========================== -->
-
-    <div class="card">
-
-        <div class="section-title">
-            <h2>🏏 Batting</h2>
-        </div>
-
-        <div class="batsmen-grid">
-
-            <div class="batsman-box striker-box">
-
-                <span class="player-label">
-                    STRIKER
-                </span>
-
-                <h3 id="striker_name">
-                    🏏 Striker : -
-                </h3>
-
-            </div>
-
-
-            <div class="batsman-box">
-
-                <span class="player-label">
-                    NON-STRIKER
-                </span>
-
-                <h3 id="non_striker_name">
-                    🏏 Non-Striker : -
-                </h3>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         RUN BUTTONS
-    ========================== -->
-
-    <div class="card">
-
-        <div class="section-title">
-            <h2>🏃 Runs</h2>
-            <p>Select runs scored on the delivery</p>
-        </div>
-
-        <div class="run-buttons">
-
-            <button
-                id="btn0"
-                onclick="addRun(0)"
-                disabled>
-                0
-            </button>
-
-            <button
-                id="btn1"
-                onclick="addRun(1)"
-                disabled>
-                1
-            </button>
-
-            <button
-                id="btn2"
-                onclick="addRun(2)"
-                disabled>
-                2
-            </button>
-
-            <button
-                id="btn3"
-                onclick="addRun(3)"
-                disabled>
-                3
-            </button>
-
-            <button
-                id="btn4"
-                class="four-btn"
-                onclick="addRun(4)"
-                disabled>
-                4
-            </button>
-
-            <button
-                id="btn6"
-                class="six-btn"
-                onclick="addRun(6)"
-                disabled>
-                6
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         EXTRAS
-    ========================== -->
-
-    <div class="card">
-
-        <div class="section-title">
-            <h2>➕ Extras</h2>
-        </div>
-
-        <div class="extras-grid">
-
-            <button
-                id="wideBtn"
-                class="wide-btn"
-                onclick="wide()"
-                disabled>
-                Wide
-            </button>
-
-            <button
-                id="noBallBtn"
-                class="noball-btn"
-                onclick="noBall()"
-                disabled>
-                No Ball
-            </button>
-
-            <button
-                id="byeBtn"
-                class="bye-btn"
-                onclick="byeRun()"
-                disabled>
-                Bye
-            </button>
-
-            <button
-                id="legByeBtn"
-                class="legbye-btn"
-                onclick="legBye()"
-                disabled>
-                Leg Bye
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         MATCH ACTIONS
-    ========================== -->
-
-    <div class="card">
-
-        <div class="section-title">
-            <h2>🎮 Match Actions</h2>
-        </div>
-
-        <div class="action-grid">
-
-            <button
-                id="wicketBtn"
-                class="wicket-btn"
-                onclick="wicket()"
-                disabled>
-                🔴 Wicket
-            </button>
-
-            <button
-                id="undoBtn"
-                class="undo-btn"
-                onclick="undoBall()"
-                disabled>
-                ↩ Undo
-            </button>
-
-            <button
-                id="finishBtn"
-                class="finish-btn"
-                onclick="finishMatch()"
-                disabled>
-                🏁 Finish Match
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         CURRENT OVER
-    ========================== -->
-
-    <div class="card">
-
-        <div class="section-title">
-            <h2>🎯 Current Over</h2>
-        </div>
-
-        <div
-            id="current_over"
-            class="current-over">
-            -
-        </div>
-
-    </div>
-
-
-    <!-- =========================
-         OVER HISTORY
-    ========================== -->
-
-    <div class="card">
-
-        <div class="section-title">
-            <h2>📋 Over History</h2>
-        </div>
-
-        <div
-            id="over_history"
-            class="over-history">
-
-            <p class="history-placeholder">
-                Completed overs will appear here.
+            <p>
+                Enter match details to start scoring
             </p>
 
         </div>
 
+
+
+        <!-- TEAM -->
+
+        <div class="input-group player-input">
+
+            <label for="team">
+                Team Name
+            </label>
+
+            <input
+                type="text"
+                id="team"
+                placeholder="Enter team name"
+                autocomplete="off"
+            >
+
+            <div
+                id="teamSuggestions"
+                class="suggestions"
+            ></div>
+
+        </div>
+
+
+
+        <!-- STRIKER -->
+
+        <div class="input-group player-input">
+
+            <label for="striker">
+                Opening Batsman
+            </label>
+
+            <input
+                type="text"
+                id="striker"
+                placeholder="Enter striker name"
+                autocomplete="off"
+            >
+
+            <div
+                id="strikerSuggestions"
+                class="suggestions"
+            ></div>
+
+        </div>
+
+
+
+        <!-- NON STRIKER -->
+
+        <div class="input-group player-input">
+
+            <label for="non_striker">
+                Non-Striker
+            </label>
+
+            <input
+                type="text"
+                id="non_striker"
+                placeholder="Enter non-striker name"
+                autocomplete="off"
+            >
+
+            <div
+                id="nonStrikerSuggestions"
+                class="suggestions"
+            ></div>
+
+        </div>
+
+
+
+        <!-- OVERS -->
+
+        <div class="input-group">
+
+            <label for="total_overs">
+                Total Overs
+            </label>
+
+            <input
+                type="number"
+                id="total_overs"
+                placeholder="Example: 10"
+                min="1"
+            >
+
+        </div>
+
+
+
+        <!-- START -->
+
+        <button
+            class="start-btn"
+            onclick="startMatch()"
+        >
+            ▶ Start Match
+        </button>
+
+
     </div>
 
-
-    <!-- =========================
-         HISTORY LINK
-    ========================== -->
-
-    <div class="bottom-navigation">
-
-        <a
-            href="{{ url_for('history') }}"
-            class="history-btn">
-            📊 View Match History
-        </a>
-
-    </div>
 
 </div>
 
 
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+
+    // ==========================================
+    // Team Suggestions
+    // ==========================================
+
+    function saveTeamName(teamName) {
+
+        if (!teamName) {
+            return;
+        }
+
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem("cricketTeamNames") || "[]"
+            );
+
+            const cleaned = saved.filter(
+                team => team.toLowerCase() !== teamName.toLowerCase()
+            );
+
+            cleaned.unshift(teamName);
+
+            const finalList = cleaned.slice(0, 10);
+
+            localStorage.setItem(
+                "cricketTeamNames",
+                JSON.stringify(finalList)
+            );
+        }
+        catch (error) {
+            console.log("Team save error:", error);
+        }
+    }
+
+
+    function setupTeamSuggestions() {
+
+        const input = document.getElementById("team");
+        const suggestions = document.getElementById("teamSuggestions");
+
+        if (!input || !suggestions) {
+            return;
+        }
+
+        const updateSuggestions = () => {
+
+            const query = input.value.trim().toLowerCase();
+            suggestions.innerHTML = "";
+
+            if (query.length === 0) {
+                return;
+            }
+
+            try {
+                const savedTeams = JSON.parse(
+                    localStorage.getItem("cricketTeamNames") || "[]"
+                );
+
+                const matched = savedTeams.filter(team =>
+                    team.toLowerCase().includes(query)
+                );
+
+                matched.forEach(team => {
+
+                    const item = document.createElement("div");
+                    item.className = "suggestion-item";
+                    item.textContent = team;
+
+                    item.onclick = function () {
+                        input.value = team;
+                        suggestions.innerHTML = "";
+                    };
+
+                    suggestions.appendChild(item);
+                });
+            }
+            catch (error) {
+                console.log("Team suggestion error:", error);
+            }
+        };
+
+        input.addEventListener("input", updateSuggestions);
+
+        document.addEventListener("click", function (event) {
+            if (
+                event.target !== input &&
+                !suggestions.contains(event.target)
+            ) {
+                suggestions.innerHTML = "";
+            }
+        });
+    }
+
+
+    // ==========================================
+    // Player Suggestions
+    // ==========================================
+
+    function setupPlayerSuggestions(
+        inputId,
+        suggestionsId
+    ) {
+
+        const input =
+            document.getElementById(inputId);
+
+        const suggestions =
+            document.getElementById(suggestionsId);
+
+
+        input.addEventListener(
+            "input",
+            async function () {
+
+                const search =
+                    input.value.trim();
+
+
+                suggestions.innerHTML = "";
+
+
+                if (search.length === 0) {
+
+                    return;
+
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/players?search=" +
+                            encodeURIComponent(search)
+                        );
+
+
+                    const players =
+                        await response.json();
+
+
+                    players.forEach(
+                        function (player) {
+
+                            const item =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            item.className =
+                                "suggestion-item";
+
+
+                            item.textContent =
+                                player;
+
+
+                            item.onclick =
+                                function () {
+
+                                    input.value =
+                                        player;
+
+                                    suggestions.innerHTML =
+                                        "";
+
+                                };
+
+
+                            suggestions.appendChild(
+                                item
+                            );
+
+                        }
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.log(
+                        "Suggestion error:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        // Close suggestions when
+        // clicking somewhere else
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target !== input &&
+                    !suggestions.contains(
+                        event.target
+                    )
+                ) {
+
+                    suggestions.innerHTML =
+                        "";
+
+                }
+
+            }
+        );
+
+    }
+
+
+
+    // ==========================================
+    // Start Match
+    // ==========================================
+
+    function startMatch() {
+
+        const team =
+            document
+                .getElementById("team")
+                .value
+                .trim();
+
+
+        const striker =
+            document
+                .getElementById("striker")
+                .value
+                .trim();
+
+
+        const nonStriker =
+            document
+                .getElementById("non_striker")
+                .value
+                .trim();
+
+
+        const totalOvers =
+            parseInt(
+                document
+                    .getElementById("total_overs")
+                    .value
+            );
+
+
+
+        // ======================================
+        // Validation
+        // ======================================
+
+        if (
+            team === "" ||
+            striker === "" ||
+            nonStriker === "" ||
+            isNaN(totalOvers) ||
+            totalOvers <= 0
+        ) {
+
+            alert(
+                "Please fill all match details correctly."
+            );
+
+            return;
+
+        }
+
+
+
+        // ======================================
+        // Save Match Setup
+        // ======================================
+
+        saveTeamName(team);
+
+        const cricketMatchSetup = {
+            team: team,
+            striker: striker,
+            nonStriker: nonStriker,
+            totalOvers: totalOvers
+        };
+
+        sessionStorage.setItem(
+            "cricketMatchSetup",
+            JSON.stringify(cricketMatchSetup)
+        );
+
+
+
+        // ======================================
+        // Go to Live Score Page
+        // ======================================
+
+        window.location.href =
+            "/score";
+
+    }
+
+
+
+    // ==========================================
+    // Enable Suggestions
+    // ==========================================
+
+    setupTeamSuggestions();
+
+    setupPlayerSuggestions(
+        "striker",
+        "strikerSuggestions"
+    );
+
+
+    setupPlayerSuggestions(
+        "non_striker",
+        "nonStrikerSuggestions"
+    );
+
+</script>
+
 
 </body>
 

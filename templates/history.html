@@ -15,9 +15,13 @@
 
 <div class="container">
 
-    <!-- History Header -->
-
     <div class="history-header">
+
+        <img
+            src="{{ url_for('static', filename='images/profile.jpg') }}"
+            alt="Profile"
+            class="profile-img"
+        >
 
         <div>
             <h1>🏏 Match History</h1>
@@ -157,15 +161,6 @@
 
 function deleteMatch(matchId) {
 
-    const confirmDelete = confirm(
-        "Are you sure you want to delete this match?"
-    );
-
-    if (!confirmDelete) {
-        return;
-    }
-
-
     fetch("/delete/" + matchId)
 
         .then(response => {
@@ -182,13 +177,7 @@ function deleteMatch(matchId) {
 
             if (data.success) {
 
-                alert("Match Deleted Successfully!");
-
                 window.location.reload();
-
-            } else {
-
-                alert("Unable to delete match.");
 
             }
 
@@ -199,10 +188,6 @@ function deleteMatch(matchId) {
             console.error(
                 "Delete Error:",
                 error
-            );
-
-            alert(
-                "Something went wrong while deleting the match."
             );
 
         });

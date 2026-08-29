@@ -34,14 +34,20 @@ let dismissedBatsmen = [];
 
 function startMatch() {
 
-    const team = document.getElementById("team").value.trim();
-    const newStriker = document.getElementById("striker").value.trim();
-    const newNonStriker = document.getElementById("non_striker").value.trim();
-    const newTotalOvers = parseInt(
-        document.getElementById("total_overs").value
-    );
+    const teamInput = document.getElementById("team");
+    const strikerInput = document.getElementById("striker");
+    const nonStrikerInput = document.getElementById("non_striker");
+    const oversInput = document.getElementById("total_overs");
 
-    // Check inputs first
+    if (!teamInput || !strikerInput || !nonStrikerInput || !oversInput) {
+        return;
+    }
+
+    const team = teamInput.value.trim();
+    const newStriker = strikerInput.value.trim();
+    const newNonStriker = nonStrikerInput.value.trim();
+    const newTotalOvers = parseInt(oversInput.value, 10);
+
     if (
         team === "" ||
         newStriker === "" ||
@@ -53,18 +59,48 @@ function startMatch() {
         return;
     }
 
-    // =====================================
-    // RESET PREVIOUS MATCH
-    // =====================================
+    sessionStorage.setItem(
+        "cricketMatchSetup",
+        JSON.stringify({
+            team: team,
+            striker: newStriker,
+            nonStriker: newNonStriker,
+            totalOvers: newTotalOvers
+        })
+    );
+
+    window.location.href = "/score";
+}
+
+// ==============================
+// Initialize Score Page
+// ==============================
+
+function initializeScorePage() {
+
+    const scorePage = document.getElementById("score");
+
+    if (!scorePage) {
+        return;
+    }
+
+    const saved = sessionStorage.getItem("cricketMatchSetup");
+
+    if (!saved) {
+        alert("Match details are missing.");
+        window.location.href = "/";
+        return;
+    }
+
+    const setup = JSON.parse(saved);
 
     totalRuns = 0;
     wickets = 0;
     balls = 0;
+    totalOvers = parseInt(setup.totalOvers, 10) || 0;
 
-    totalOvers = newTotalOvers;
-
-    strikerName = newStriker;
-    nonStrikerName = newNonStriker;
+    strikerName = setup.striker || "";
+    nonStrikerName = setup.nonStriker || "";
 
     strikerRuns = 0;
     strikerBalls = 0;
@@ -83,30 +119,12 @@ function startMatch() {
     ballHistory = [];
     dismissedBatsmen = [];
 
-    // =====================================
-    // RESET DISPLAY
-    // =====================================
+    document.getElementById("team_name").textContent = setup.team;
 
-    document.getElementById("team_name").innerText = team;
-
-    document.getElementById("striker_name").innerHTML =
-        "🏏 Striker : " + strikerName + " (0 off 0)";
-
-    document.getElementById("non_striker_name").innerHTML =
-        "🏏 Non-Striker : " + nonStrikerName + " (0 off 0)";
-
-    document.getElementById("current_over").innerHTML = "-";
-
-    document.getElementById("over_history").innerHTML = "";
-
-    // Update scoreboard
     updateScoreboard();
-
-    // Enable scoring buttons
     enableButtons();
-
-    alert("Match Started!");
 }
+
 // ==============================
 // Enable Buttons
 // ==============================
@@ -156,8 +174,8 @@ function addRun(run) {
         run: run
     });
 
-    // Change strike for odd runs
-    if (run === 1 || run === 3) {
+    // Change strike for odd runs (1, 3, 5)
+    if (run === 1 || run === 3 || run === 5) {
         changeStrike();
     }
 
@@ -319,6 +337,32 @@ function calculateRunRate() {
 // Update Scoreboard
 // ==============================
 
+function renderDismissedBatsmen() {
+
+    const batsmenHistoryEl = document.getElementById("batsmen_history");
+
+    if (!batsmenHistoryEl) {
+        return;
+    }
+
+    if (!dismissedBatsmen.length) {
+        batsmenHistoryEl.innerHTML =
+            '<p class="history-placeholder">Dismissed batsmen will appear here.</p>';
+        return;
+    }
+
+    batsmenHistoryEl.innerHTML = dismissedBatsmen.map(item => {
+        const runs = item.runs ?? 0;
+        const balls = item.balls ?? 0;
+        return `
+            <div class="dismissed-item">
+                <span class="dismissed-player">${item.player_name}</span>
+                <span class="dismissed-score">${runs} (${balls})</span>
+            </div>
+        `;
+    }).join("");
+}
+
 function updateScoreboard() {
 
     document.getElementById("score").innerHTML =
@@ -351,6 +395,7 @@ function updateScoreboard() {
         nonStrikerBalls +
         ")";
 
+    renderDismissedBatsmen();
     updateCurrentOver();
 }
 
@@ -388,6 +433,7 @@ function wicket() {
         batsman: strikerName
     });
 
+    renderDismissedBatsmen();
     updateScoreboard();
 
 
@@ -1276,15 +1322,11 @@ async function saveMatch() {
 
         const result = await response.json();
 
-        alert(result.message);
-
     }
 
     catch (error) {
 
         console.log(error);
-
-        alert("Unable to save match.");
 
     }
 
@@ -1300,28 +1342,12 @@ async function finishMatch() {
 
     disableButtons();
 
-    let summary =
-        "🏏 MATCH FINISHED\n\n" +
-
-        "Score : " +
-        totalRuns +
-        "/" +
-        wickets +
-
-        "\nOvers : " +
-        getOversPlayed() +
-
-        "\nRun Rate : " +
-        calculateRunRate();
-
-    alert(summary);
-
     await saveMatch();
 
-    if (confirm("Open Match History?")) {
+    const goToHistory = confirm("📊 Open Match History?");
 
+    if (goToHistory) {
         window.location.href = "/history";
-
     }
 
 }
@@ -1369,5 +1395,9 @@ function resetMatch() {
 // ==============================
 // Console
 // ==============================
+
+document.addEventListener("DOMContentLoaded", function () {
+    initializeScorePage();
+});
 
 console.log("🏏 Cricket Score Tracker Loaded Successfully");
