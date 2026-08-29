@@ -10,7 +10,8 @@ from database import (
     get_over_history,
     delete_match,
     save_player,
-    get_player_suggestions
+    get_player_suggestions,
+    delete_player_by_name
 )
 
 
@@ -269,6 +270,25 @@ def delete(match_id):
 
         "message": "Match Deleted Successfully"
 
+    })
+
+
+# ==========================================
+# Delete Player Suggestion
+# ==========================================
+
+@app.route("/delete_player", methods=["POST"])
+def delete_player():
+    data = request.get_json()
+    if not data or "player_name" not in data:
+        return jsonify({"success": False, "message": "Player name is missing."}), 400
+
+    player_name = data["player_name"].strip()
+    delete_player_by_name(player_name)
+
+    return jsonify({
+        "success": True,
+        "message": "Player suggestion deleted successfully"
     })
 
 

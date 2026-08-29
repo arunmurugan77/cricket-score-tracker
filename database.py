@@ -638,3 +638,33 @@ def delete_match(match_id):
 
     cursor.close()
     conn.close()
+
+
+# ==========================================
+# Delete Player Name
+# ==========================================
+
+def delete_player_by_name(player_name):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if isinstance(conn, sqlite3.Connection):
+        cursor.execute("""
+            DELETE FROM players
+            WHERE player_name = ?
+        """, (
+            player_name,
+        ))
+    else:
+        cursor.execute("""
+            DELETE FROM players
+            WHERE player_name = %s
+        """, (
+            player_name,
+        ))
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()

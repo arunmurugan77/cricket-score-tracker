@@ -1570,3 +1570,69 @@ tbody tr:last-child td {
     box-sizing: border-box !important;
     letter-spacing: normal !important;
 }
+
+/* Autocomplete suggestion delete button styles */
+.suggestion-item {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.suggestion-delete-btn {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    padding: 2px 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border-radius: 4px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.suggestion-delete-btn:hover {
+    color: #ff4d4d !important;
+    background: rgba(255, 77, 77, 0.2) !important;
+}
+
+/* Match History landing page button */
+.history-btn-landing {
+    display: block !important;
+    text-align: center !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    margin-top: 12px !important;
+}
+
+.history-btn-landing:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #2ecc71 !important; /* Glow green border on hover */
+    color: #2ecc71 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3),
+                0 0 10px rgba(46, 204, 113, 0.2) !important;
+}
+
+.history-btn-landing:active {
+    transform: translateY(0) !important;
+}
+
+@media (max-width: 500px) {
+    .history-btn-landing {
+        padding: 12px !important;
+        font-size: 14px !important;
+        margin-top: 8px !important;
+        border-radius: 10px !important;
+    }
+}

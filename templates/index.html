@@ -167,6 +167,13 @@
             ▶ Start Match
         </button>
 
+        <a
+            href="{{ url_for('history') }}"
+            class="history-btn-landing"
+        >
+            📊 View Match History
+        </a>
+
 
     </div>
 
@@ -304,6 +311,47 @@
     // Player Suggestions
     // ==========================================
 
+    // ==========================================
+    // Delete Player Name (LocalStorage and DB)
+    // ==========================================
+
+    async function deletePlayerName(playerName) {
+        if (!playerName) return;
+
+        // 1. Delete from Local Storage
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem("cricketPlayerNames") || "[]"
+            );
+            const cleaned = saved.filter(
+                name => name.toLowerCase() !== playerName.toLowerCase()
+            );
+            localStorage.setItem(
+                "cricketPlayerNames",
+                JSON.stringify(cleaned)
+            );
+        } catch (error) {
+            console.log("Local delete error:", error);
+        }
+
+        // 2. Delete from Database
+        try {
+            await fetch("/delete_player", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ player_name: playerName })
+            });
+        } catch (error) {
+            console.log("DB delete error:", error);
+        }
+    }
+
+    // ==========================================
+    // Player Suggestions
+    // ==========================================
+
     function setupPlayerSuggestions(inputId, suggestionsId) {
         const input = document.getElementById(inputId);
         const suggestions = document.getElementById(suggestionsId);
@@ -317,9 +365,69 @@
             list.slice(0, 10).forEach(player => {
                 const item = document.createElement("div");
                 item.className = "suggestion-item";
-                item.textContent = player;
 
+                // Text label
+                const nameSpan = document.createElement("span");
+                nameSpan.textContent = player;
+                item.appendChild(nameSpan);
+
+                // Delete 'x' button
+                const deleteBtn = document.createElement("span");
+                deleteBtn.className = "suggestion-delete-btn";
+                deleteBtn.innerHTML = "×";
+                deleteBtn.title = "Delete player";
+
+                deleteBtn.onclick = function (e) {
+                    e.stopPropagation(); // Prevent trigger parent onclick selection
+                    if (confirm("⚠️ Delete player '" + player + "' from suggestions?")) {
+                        deletePlayerName(player).then(() => {
+                            updateSuggestions(); // Reload suggestions list
+                        });
+                    }
+                };
+
+                item.appendChild(deleteBtn);
+
+                // Long Press (Mobile Touch & Desktop Mouse Hold)
+                let pressTimer;
+                let isLongPress = false;
+
+                const startPress = (e) => {
+                    clearTimeout(pressTimer);
+                    isLongPress = false;
+                    pressTimer = setTimeout(() => {
+                        isLongPress = true;
+                        if (confirm("⚠️ Delete player '" + player + "' from suggestions?")) {
+                            deletePlayerName(player).then(() => {
+                                updateSuggestions();
+                            });
+                        }
+                    }, 750); // 750ms threshold
+                };
+
+                const cancelPress = () => {
+                    clearTimeout(pressTimer);
+                };
+
+                // Touch Events (Mobile)
+                item.addEventListener("touchstart", startPress, { passive: true });
+                item.addEventListener("touchend", cancelPress);
+                item.addEventListener("touchmove", cancelPress);
+                item.addEventListener("touchcancel", cancelPress);
+
+                // Mouse Events (Desktop)
+                item.addEventListener("mousedown", (e) => {
+                    if (e.button === 0) startPress(e);
+                });
+                item.addEventListener("mouseup", cancelPress);
+                item.addEventListener("mouseleave", cancelPress);
+
+                // Click item to select (only if it wasn't a long press)
                 item.onclick = function () {
+                    if (isLongPress) {
+                        isLongPress = false;
+                        return;
+                    }
                     input.value = player;
                     suggestions.innerHTML = "";
                 };
@@ -330,9 +438,9 @@
 
         const updateSuggestions = async () => {
             const query = input.value.trim().toLowerCase();
-            suggestions.innerHTML = "";
-
+            
             if (query.length === 0) {
+                suggestions.innerHTML = "";
                 return;
             }
 
@@ -368,6 +476,12 @@
                     "/players?search=" + encodeURIComponent(query)
                 );
                 const dbMatched = await response.json();
+
+                // Race condition check: If input query has changed, or suggestions box is closed, discard this response
+                const currentQuery = input.value.trim().toLowerCase();
+                if (currentQuery !== query || suggestions.innerHTML === "") {
+                    return;
+                }
 
                 // Combine, removing duplicates
                 const combined = [...localMatched];
