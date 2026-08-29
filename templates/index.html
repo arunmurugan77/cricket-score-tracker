@@ -274,123 +274,107 @@
     // Player Suggestions
     // ==========================================
 
-    function setupPlayerSuggestions(
-        inputId,
-        suggestionsId
-    ) {
+    // ==========================================
+    // Save Player Name Locally
+    // ==========================================
 
-        const input =
-            document.getElementById(inputId);
+    function savePlayerNameLocally(playerName) {
+        if (!playerName) {
+            return;
+        }
+        try {
+            const saved = JSON.parse(
+                localStorage.getItem("cricketPlayerNames") || "[]"
+            );
+            const cleaned = saved.filter(
+                name => name.toLowerCase() !== playerName.toLowerCase()
+            );
+            cleaned.unshift(playerName);
+            const finalList = cleaned.slice(0, 30); // Store up to 30 unique names
+            localStorage.setItem(
+                "cricketPlayerNames",
+                JSON.stringify(finalList)
+            );
+        } catch (error) {
+            console.log("Player name save error:", error);
+        }
+    }
 
-        const suggestions =
-            document.getElementById(suggestionsId);
+    // ==========================================
+    // Player Suggestions
+    // ==========================================
 
+    function setupPlayerSuggestions(inputId, suggestionsId) {
+        const input = document.getElementById(inputId);
+        const suggestions = document.getElementById(suggestionsId);
 
-        input.addEventListener(
-            "input",
-            async function () {
+        if (!input || !suggestions) {
+            return;
+        }
 
-                const search =
-                    input.value.trim();
+        const updateSuggestions = async () => {
+            const query = input.value.trim().toLowerCase();
+            suggestions.innerHTML = "";
 
+            if (query.length === 0) {
+                return;
+            }
 
+            // 1. Get matches from Local Storage
+            let localMatched = [];
+            try {
+                const savedPlayers = JSON.parse(
+                    localStorage.getItem("cricketPlayerNames") || "[]"
+                );
+                localMatched = savedPlayers.filter(name =>
+                    name.toLowerCase().includes(query)
+                );
+            } catch (error) {
+                console.log("Local suggestions error:", error);
+            }
+
+            // 2. Get matches from Server Database
+            let dbMatched = [];
+            try {
+                const response = await fetch(
+                    "/players?search=" + encodeURIComponent(query)
+                );
+                dbMatched = await response.json();
+            } catch (error) {
+                console.log("DB suggestions error:", error);
+            }
+
+            // Combine lists, removing duplicates (case-insensitive)
+            const combined = [...localMatched];
+            dbMatched.forEach(name => {
+                if (!combined.some(c => c.toLowerCase() === name.toLowerCase())) {
+                    combined.push(name);
+                }
+            });
+
+            // Render combined suggestions
+            combined.slice(0, 10).forEach(player => {
+                const item = document.createElement("div");
+                item.className = "suggestion-item";
+                item.textContent = player;
+
+                item.onclick = function () {
+                    input.value = player;
+                    suggestions.innerHTML = "";
+                };
+
+                suggestions.appendChild(item);
+            });
+        };
+
+        input.addEventListener("input", updateSuggestions);
+
+        // Close suggestions when clicking elsewhere
+        document.addEventListener("click", function (event) {
+            if (event.target !== input && !suggestions.contains(event.target)) {
                 suggestions.innerHTML = "";
-
-
-                if (search.length === 0) {
-
-                    return;
-
-                }
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            "/players?search=" +
-                            encodeURIComponent(search)
-                        );
-
-
-                    const players =
-                        await response.json();
-
-
-                    players.forEach(
-                        function (player) {
-
-                            const item =
-                                document.createElement(
-                                    "div"
-                                );
-
-
-                            item.className =
-                                "suggestion-item";
-
-
-                            item.textContent =
-                                player;
-
-
-                            item.onclick =
-                                function () {
-
-                                    input.value =
-                                        player;
-
-                                    suggestions.innerHTML =
-                                        "";
-
-                                };
-
-
-                            suggestions.appendChild(
-                                item
-                            );
-
-                        }
-                    );
-
-                }
-
-                catch (error) {
-
-                    console.log(
-                        "Suggestion error:",
-                        error
-                    );
-
-                }
-
             }
-        );
-
-
-
-        // Close suggestions when
-        // clicking somewhere else
-
-        document.addEventListener(
-            "click",
-            function (event) {
-
-                if (
-                    event.target !== input &&
-                    !suggestions.contains(
-                        event.target
-                    )
-                ) {
-
-                    suggestions.innerHTML =
-                        "";
-
-                }
-
-            }
-        );
-
+        });
     }
 
 
@@ -458,6 +442,8 @@
         // ======================================
 
         saveTeamName(team);
+        savePlayerNameLocally(striker);
+        savePlayerNameLocally(nonStriker);
 
         const cricketMatchSetup = {
             team: team,

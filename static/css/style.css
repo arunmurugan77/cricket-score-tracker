@@ -1347,3 +1347,201 @@ tbody tr:last-child td {
         display: none;
     }
 }
+
+/* ==================== HOME PAGE MODERN PREMIUM UI (GLASSMORPHISM) ==================== */
+.setup-card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 
+                0 0 100px rgba(31, 124, 79, 0.1) !important;
+    border-radius: 24px !important;
+    color: #ffffff !important;
+    padding: 24px !important;
+}
+
+.setup-card .section-title h2 {
+    color: #2ecc71 !important; /* Vibrant cricket green */
+    text-shadow: 0 0 20px rgba(46, 204, 113, 0.3) !important;
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+}
+
+.setup-card .section-title p {
+    color: #a5b1c2 !important;
+    font-weight: 500 !important;
+}
+
+.setup-card .input-group {
+    position: relative !important; /* Crucial for absolute suggestions dropdown */
+    margin-bottom: 16px !important;
+}
+
+.setup-card .input-group label {
+    color: #2ecc71 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 6px !important;
+}
+
+.setup-card input {
+    background: rgba(13, 27, 42, 0.5) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    font-size: 15px !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.setup-card input::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.setup-card input:focus {
+    border-color: #2ecc71 !important;
+    background: rgba(13, 27, 42, 0.7) !important;
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.25),
+                inset 0 0 5px rgba(46, 204, 113, 0.1) !important;
+}
+
+/* Autocomplete Suggestions Hover Menu */
+.setup-card .suggestions {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: #101c2a !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+    max-height: 180px !important;
+    overflow-y: auto !important;
+    margin-top: 4px !important;
+}
+
+.setup-card .suggestion-item {
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 12px 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.setup-card .suggestion-item:last-child {
+    border-bottom: none !important;
+}
+
+.setup-card .suggestion-item:hover {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+    color: #ffffff !important;
+    padding-left: 20px !important;
+}
+
+/* Start Match Button */
+.setup-card .start-btn {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    margin-top: 12px !important;
+}
+
+.setup-card .start-btn:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 15px 30px rgba(46, 204, 113, 0.45) !important;
+}
+
+/* Header UI Tweaks for Glassmorphism */
+.app-header {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2) !important;
+    color: #ffffff !important;
+    border-radius: 24px !important;
+}
+
+.app-header .header-text h1 {
+    color: #2ecc71 !important;
+    font-size: clamp(1.6rem, 5vw, 2.2rem) !important;
+    text-shadow: 0 0 15px rgba(46, 204, 113, 0.2) !important;
+}
+
+.app-header .header-text p {
+    color: #a5b1c2 !important;
+}
+
+.app-header .profile-img {
+    border: 4px solid #2ecc71 !important;
+    box-shadow: 0 10px 25px rgba(46, 204, 113, 0.2) !important;
+}
+
+/* Landing Page Mobile Screen Optimizations */
+@media (max-width: 500px) {
+    .app-header {
+        flex-direction: row !important; /* Keep profile picture next to text on mobile */
+        text-align: left !important;
+        gap: 12px !important;
+        padding: 12px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .app-header .profile-img {
+        width: 60px !important;
+        height: 60px !important;
+        border-width: 2px !important;
+    }
+
+    .app-header .header-text h1 {
+        font-size: 1.3rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    .app-header .header-text p {
+        font-size: 0.8rem !important;
+    }
+
+    .setup-card {
+        padding: 14px 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .setup-card .section-title {
+        margin-bottom: 12px !important;
+        padding-bottom: 6px !important;
+    }
+
+    .setup-card .section-title h2 {
+        font-size: 1.25rem !important;
+    }
+
+    .setup-card .section-title p {
+        font-size: 0.8rem !important;
+    }
+
+    .setup-card input {
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        border-radius: 10px !important;
+    }
+
+    .setup-card .input-group {
+        margin-bottom: 12px !important;
+    }
+
+    .setup-card .start-btn {
+        padding: 12px !important;
+        font-size: 14px !important;
+        margin-top: 6px !important;
+        border-radius: 10px !important;
+    }
+}
